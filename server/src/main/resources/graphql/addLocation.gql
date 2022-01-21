@@ -1,0 +1,6 @@
+mutation($input: AddLocationInput!) {
+    addLocation(input: $input) {
+        id
+        name
+    }
+}

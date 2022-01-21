@@ -1,0 +1,6 @@
+mutation($input: AddCategoryPropertyInput!) {
+    addCategoryProperty(input: $input) {
+        id
+        name
+    }
+}

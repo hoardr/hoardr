@@ -1,0 +1,9 @@
+mutation($input: AddCategoryInput!) {
+    addCategory(input: $input) {
+        id
+        name
+        events {
+            id type data
+        }
+    }
+}
