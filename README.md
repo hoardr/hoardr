@@ -11,4 +11,4 @@ A self-hosted application for tracking your home inventory.
 1. `docker-compose up`
 2. `./gradlew bootRun`
 3. `cd frontend`
-4. `npm run start`
+4. `npm install && npm run start`
