@@ -97,7 +97,15 @@ export class ItemApi {
         addItem(input: $input) { id }
     }`
 
+    private static SET_PROPERTY_VALUE = gql`mutation($input: SetPropertyValueInput!){
+        setPropertyValue(input: $input) { id }
+    }`
+
     public async add(name: string, categoryId: number, locationId: number, quantity: number = 1) {
         await this.client.request(ItemApi.ADD, {input: {name, categoryId, locationId, quantity}})
+    }
+
+    public async setPropertyValue(itemId: number, propertyId: number, value: string | null) {
+        await this.client.request(ItemApi.SET_PROPERTY_VALUE, {input: {itemId, propertyId, value}})
     }
 }

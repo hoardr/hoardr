@@ -1,7 +1,7 @@
 import {Location} from "../../Api/Types";
 import React from "react";
 import {Button, Card, ConfigProvider, Empty, message} from "antd";
-import {ModalFormBtn} from "../../Components/ModalCard";
+import {ModalFormButton} from "../../Components/ModalCard";
 import {PlusOutlined} from "@ant-design/icons";
 import {TreeTable} from "../../Components/TreeTable";
 import {DeleteLocation, locationColumns, RemoveChildLocation} from "./LocationTableActions";
@@ -13,7 +13,7 @@ type LocationsCardProps = { locations: Location[], onUpdate: () => void, actions
 
 export function LocationsCard({locations, onUpdate}: LocationsCardProps) {
     const api = useApi()
-    const addLocationBtn = <ModalFormBtn
+    const addLocationBtn = <ModalFormButton
         title={"Add location"}
         button={(openModal) => <Button type={"primary"} size={"small"} icon={<PlusOutlined/>}
                                        onClick={openModal}>Add location</Button>}>
@@ -26,7 +26,7 @@ export function LocationsCard({locations, onUpdate}: LocationsCardProps) {
                                   closeModal()
                               })
                           }}/>}
-    </ModalFormBtn>;
+    </ModalFormButton>;
     return <Card bordered={false} title={"Locations"}
                  extra={addLocationBtn}>
         <ConfigProvider renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No locations"}/>}>
@@ -42,7 +42,7 @@ type ChildLocationsCardProps = { children: Location[], onUpdate: () => void, par
 export function ChildLocationsCard({children, onUpdate, parent}: ChildLocationsCardProps) {
     const api = useApi()
     return <Card bordered={false} title={"Child locations"}
-                 extra={<ModalFormBtn
+                 extra={<ModalFormButton
                      title={"Add child location"}
                      button={(openModal) => <Button type={"primary"} size={"small"} icon={<PlusOutlined/>}
                                                     onClick={openModal}>Add child location</Button>}>
@@ -56,7 +56,7 @@ export function ChildLocationsCard({children, onUpdate, parent}: ChildLocationsC
                                                closeModal()
                                            })
                                        }}/>}
-                 </ModalFormBtn>}>
+                 </ModalFormButton>}>
         <ConfigProvider
             renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No child locations"}/>}>
             <TreeTable data={children}

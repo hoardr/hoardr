@@ -30,7 +30,7 @@ fun Item.createdEvent(): ItemEvent {
     }
 }
 
-fun Item.propertyValueUpdatedEvent(oldValue: String?, newValue: String, property: Property): ItemEvent {
+fun Item.propertyValueUpdatedEvent(oldValue: String?, newValue: String?, property: Property): ItemEvent {
     return event(ItemEventType.PROPERTY_VALUE_UPDATED) {
         this["propertyId"] = property.id
         this["oldValue"] = oldValue

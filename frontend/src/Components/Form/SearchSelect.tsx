@@ -9,9 +9,12 @@ export type SearchSelectProps<T extends EntityWithAllParents> =
     & { search: (name: string) => Promise<T[]> }
 
 type Entity = { id: number, name: string }
-type EntityWithAllParents = Entity & { allParents: Entity[] }
+type EntityWithAllParents = Entity & { allParents?: Entity[] }
 
-function label(value: Entity, parents: Entity[]): ReactNode {
+function label(value: Entity, parents?: Entity[]): ReactNode {
+    if (!parents) {
+        return <Typography.Text>{value.name}</Typography.Text>
+    }
     const prefix = parents.length > 0 ? (parents.map(x => x.name).join("/") + "/") : ""
     return <>{prefix}<Typography.Text strong>{value.name}</Typography.Text></>
 }

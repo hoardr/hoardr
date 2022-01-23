@@ -2,6 +2,7 @@ package com.github.rasmussaks.hoardr.domain
 
 import com.github.rasmussaks.hoardr.domain.event.ItemEvent
 import com.github.rasmussaks.hoardr.domain.event.propertyValueUpdatedEvent
+import com.github.rasmussaks.hoardr.storage.PropertyValueRepository
 import javax.persistence.*
 
 @Entity
@@ -33,13 +34,22 @@ class Item(
             .toList()
     }
 
-    fun setPropertyValue(property: Property, newValue: String) {
-        val propertyValue = propertyValues.find { it.id == property.id }
-        if (propertyValue == null) {
-            propertyValues.add(PropertyValue(newValue, property, this))
-        } else {
-            propertyValue.value = newValue
+    fun setPropertyValue(property: Property, newValue: String?, propertyValueRepository: PropertyValueRepository) {
+        val propertyValue = propertyValues.find { it.property.id == property.id }
+        val oldValue = propertyValue?.value
+        if (propertyValue == null && newValue == null) {
+            return
         }
-        events.add(this.propertyValueUpdatedEvent(propertyValue?.value, newValue, property))
+        if (propertyValue == null) {
+            propertyValues.add(PropertyValue(newValue!!, property, this))
+        } else {
+            if (newValue.isNullOrEmpty()) {
+                propertyValues.removeIf { it.id == propertyValue.id }
+                propertyValueRepository.delete(propertyValue)
+            } else {
+                propertyValue.value = newValue
+            }
+        }
+        events.add(this.propertyValueUpdatedEvent(oldValue, newValue, property))
     }
 }

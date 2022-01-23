@@ -36,6 +36,8 @@ export type Property = {
     categories: Category[]
 }
 
+export type PropertyValueType = string
+
 export type CategoryEvent = {
     id: number
     type: string
@@ -45,7 +47,7 @@ export type CategoryEvent = {
 
 export type PropertyValue = {
     id: number
-    value: string
+    value: PropertyValueType
     property: Property
 }
 

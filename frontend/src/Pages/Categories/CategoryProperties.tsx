@@ -2,7 +2,7 @@ import {Category, Property} from "../../Api/Types";
 import React, {useCallback} from "react";
 import {Button, Card, ConfigProvider, Empty, message, Popconfirm, Space, Table} from "antd";
 import {ColumnsType} from "antd/lib/table";
-import {ModalFormBtn} from "../../Components/ModalCard";
+import {ModalFormButton} from "../../Components/ModalCard";
 import {gql} from "graphql-request";
 import {useGraphQLClient} from "../../App";
 import {ExclamationCircleOutlined, PlusOutlined} from "@ant-design/icons";
@@ -77,7 +77,7 @@ function NewPropertyButton({category, onUpdate}: { category: Category, onUpdate?
         await client.request<{ addProperty: Property }>(ADD_PROPERTY, {input: {categoryId, name, type}})
         onUpdate && onUpdate()
     }, [client, onUpdate]);
-    return <ModalFormBtn
+    return <ModalFormButton
         title={"New property"}
         button={(openModal) => <Button type={"primary"} size={"small"} icon={<PlusOutlined/>}
                                        onClick={openModal}>New property</Button>}>
@@ -89,7 +89,7 @@ function NewPropertyButton({category, onUpdate}: { category: Category, onUpdate?
                                   closeModal()
                               })
                           }}/>}
-    </ModalFormBtn>;
+    </ModalFormButton>;
 }
 
 export function CategoryPropertiesCard({

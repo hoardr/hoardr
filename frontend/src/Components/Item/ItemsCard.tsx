@@ -1,6 +1,6 @@
 import {Item} from "../../Api/Types";
 import {Button, Card, ConfigProvider, Empty, message} from "antd";
-import {ModalFormBtn} from "../ModalCard";
+import {ModalFormButton} from "../ModalCard";
 import {itemColumns} from "./ItemsTable";
 import React from "react";
 import {useApi} from "../../Api";
@@ -37,7 +37,7 @@ type ItemsCardProps = { items: Item[], onUpdate: () => void } & ItemFormInitialV
 export function ItemsCard({items, onUpdate, initialValues}: ItemsCardProps) {
     const api = useApi()
     return <Card bordered={false} title={"Items"}
-                 extra={<ModalFormBtn
+                 extra={<ModalFormButton
                      title={"Add item"}
                      button={(openModal) => <Button type={"primary"} size={"small"} icon={<PlusOutlined/>}
                                                     onClick={openModal}>Add item</Button>}>
@@ -51,7 +51,7 @@ export function ItemsCard({items, onUpdate, initialValues}: ItemsCardProps) {
                                            closeModal()
                                        })
                                    }}/>}
-                 </ModalFormBtn>}>
+                 </ModalFormButton>}>
         <ConfigProvider renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No items"}/>}>
             <TreeTable data={items} columns={itemColumns()}/>
         </ConfigProvider>

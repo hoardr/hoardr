@@ -1,10 +1,11 @@
 import {Item, ItemProperty} from "../../Api/Types";
 import {ColumnsType} from "antd/lib/table";
-import {Card, ConfigProvider, Empty, Table, Typography} from "antd";
+import {Card, ConfigProvider, Empty, Space, Table, Typography} from "antd";
 import React from "react";
 import {CategoryLink} from "../../Components/Category/CategoryLink";
+import {SetPropertyValue} from "./ItemPropertiesTableActions";
 
-export function ItemPropertiesTable({item, onUpdate}: { item: Item, onUpdate?: () => void }) {
+export function ItemPropertiesTable({item, onUpdate}: { item: Item, onUpdate: () => void }) {
     const allProps = item.allProperties
 
     const columns: ColumnsType<ItemProperty> = [
@@ -29,14 +30,16 @@ export function ItemPropertiesTable({item, onUpdate}: { item: Item, onUpdate?: (
             render: (category) => {
                 return category ? <CategoryLink to={category}/> : "none"
             }
-        },/*
+        },
         {
             title: "Actions",
             key: "actions",
-            render: (_, prop) => <Space>
-                <RemovePropertyFromCategoryButton property={prop} category={prop.category} onUpdate={onUpdate}/>
+            render: (_, itemProp) => <Space>
+                <SetPropertyValue item={item} property={itemProp.property}
+                                  currentValue={item.propertyValues.find(p => p.property.id === itemProp.property.id)?.value}
+                                  onUpdate={onUpdate} />
             </Space>
-        }*/
+        }
     ]
 
     return <Table bordered={false} size={"small"} dataSource={allProps} columns={columns} rowKey={"id"}/>;
@@ -45,7 +48,7 @@ export function ItemPropertiesTable({item, onUpdate}: { item: Item, onUpdate?: (
 export function ItemPropertiesCard({
     item,
     onUpdate
-}: { item: Item, onUpdate?: () => void }) {
+}: { item: Item, onUpdate: () => void }) {
     return <Card bordered={false} title={"Properties"}
         /*extra={<NewPropertyButton category={item} onUpdate={onUpdate}/>}*/>
         <ConfigProvider renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No items"}/>}>

@@ -5,10 +5,7 @@ import com.github.rasmussaks.hoardr.domain.QItem
 import com.github.rasmussaks.hoardr.domain.event.createdEvent
 import com.github.rasmussaks.hoardr.graphql.input.AddItemInput
 import com.github.rasmussaks.hoardr.graphql.input.SetPropertyValueInput
-import com.github.rasmussaks.hoardr.storage.CategoryRepository
-import com.github.rasmussaks.hoardr.storage.PropertyRepository
-import com.github.rasmussaks.hoardr.storage.ItemRepository
-import com.github.rasmussaks.hoardr.storage.LocationRepository
+import com.github.rasmussaks.hoardr.storage.*
 import com.querydsl.core.BooleanBuilder
 import org.springframework.graphql.data.method.annotation.Argument
 import org.springframework.graphql.data.method.annotation.MutationMapping
@@ -23,6 +20,7 @@ class ItemController(
     private val categoryRepository: CategoryRepository,
     private val locationRepository: LocationRepository,
     private val propertyRepository: PropertyRepository,
+    private val propertyValueRepository: PropertyValueRepository,
 ) {
     @QueryMapping
     fun items(@Argument id: Long?, @Argument name: String?, @Argument categoryId: Long?): Iterable<Item> {
@@ -48,7 +46,7 @@ class ItemController(
     fun setPropertyValue(@Argument input: SetPropertyValueInput): Item {
         val item = itemRepository.getReferenceById(input.itemId)
         val property = propertyRepository.getReferenceById(input.propertyId)
-        item.setPropertyValue(property, input.value)
+        item.setPropertyValue(property, input.value, propertyValueRepository)
         return itemRepository.save(item)
     }
 }

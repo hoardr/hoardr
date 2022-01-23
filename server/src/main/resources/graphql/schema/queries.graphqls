@@ -2,4 +2,5 @@ type Query {
     categories(id: Int, name: String): [Category!]!
     items(id: Int, name: String, categoryId: Int): [Item!]!
     locations(id: Int, name: String): [Location!]!
+    properties(id: Int, name: String): [Property!]!
 }

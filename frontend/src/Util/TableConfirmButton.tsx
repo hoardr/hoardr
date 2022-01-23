@@ -17,13 +17,11 @@ const icons = {error: ExclamationCircleOutlined, warn: ExclamationCircleOutlined
 export function TableConfirmButton(props: ConfirmButtonProps) {
     const color = colors[props.type]
     const confirmIcon = icons[props.type]
-    return <Tooltip title={props.tooltip}>
-        <Popconfirm title={props.confirmTitle}
+    return <Popconfirm title={props.confirmTitle}
                     icon={React.createElement(confirmIcon, {style: {color}})}
                     onConfirm={props.onConfirm}>
             <TableActionButton tooltip={props.tooltip} style={{color}} icon={props.icon}/>
         </Popconfirm>
-    </Tooltip>
 }
 
 export function TableActionButton({
