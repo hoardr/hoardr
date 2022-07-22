@@ -4,8 +4,8 @@ import {InformationCircleIcon, LinkIcon, PencilIcon, PlusIcon} from "@heroicons/
 import {classNames} from '../../Util/classNames';
 import {Link, Route, Routes} from "react-router-dom";
 import {Category} from "../../Api/Types";
-import {Columns, Table} from "../Components/Table";
 import {ComponentProps, FC, PropsWithChildren, ReactNode} from "react";
+import {Columns, Table} from "../Components/TableProps";
 
 export function Categories() {
     return <PageContent>

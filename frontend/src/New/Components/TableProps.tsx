@@ -1,5 +1,5 @@
 import {Key, ReactNode} from "react";
-import {classNames} from "../../../Util/classNames";
+import {classNames} from "../../Util/classNames";
 
 export type Column<RecordType> = {
     key: Key,
@@ -31,7 +31,8 @@ export function Table<RecordType>({keyIndex, columns, data}: TableProps<RecordTy
         {data.map((row, rowIdx) => (
             <tr key={row[keyIndex] as unknown as Key} className={classNames(rowIdx % 2 == 1 ? "bg-gray-50" : "")}>
                 {columns.map((column) => (
-                    <td key={column.key} className={classNames("whitespace-nowrap px-3 py-4 text-sm", column.className)}>{column.render(row, rowIdx)}</td>
+                    <td key={column.key}
+                        className={classNames("whitespace-nowrap px-3 py-4 text-sm", column.className)}>{column.render(row, rowIdx)}</td>
                 ))}
             </tr>
         ))}
