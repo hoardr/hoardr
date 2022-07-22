@@ -24,7 +24,7 @@ export function categoryColumns(actions?: (category: Category) => React.ReactNod
         {
             title: "Items",
             key: "items",
-            render: (_, record) => <ItemsDrawer items={record.items} allItems={record.allItems}/>
+            render: (_, record) => <ItemsDrawer items={record.items || []} allItems={record.allItems || []}/>
         }
     ];
     if (actions) {
@@ -56,7 +56,7 @@ export function RemoveChildCategory({
 export function DeleteCategory({category, onUpdate}: { category: Category, onUpdate: () => void }) {
     const api = useApi()
     return <TableConfirmButton
-        confirmTitle={<>Delete {category.name}?<br/>This will delete all {category.items.length} items in here.<br/>Any
+        confirmTitle={<>Delete {category.name}?<br/>This will delete all {category.items?.length} items in here.<br/>Any
             child categories are unaffected.</>}
         icon={<BiTrash size={20}/>}
         tooltip={"Delete category"}

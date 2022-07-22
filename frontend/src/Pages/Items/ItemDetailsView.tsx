@@ -1,12 +1,13 @@
 import {gql} from "graphql-request";
-import {useGraphQLClient} from "../../App";
 import React, {ReactNode, useState} from "react";
 import {Item} from "../../Api/Types";
-import {Button, Col, Empty, PageHeader, Row, Spin, Tabs, Typography} from "antd";
+import {Button, Card, Col, Empty, PageHeader, Row, Spin, Tabs, Typography} from "antd";
 import {BreadCrumbs} from "./BreadCrumbs";
 import {Link, useParams} from "react-router-dom";
 import {useAsyncMemo} from "../../Util/useAsyncMemo";
 import {ItemPropertiesCard} from "./ItemPropertiesCard";
+import {ItemEventsTable} from "./ItemEventsTable";
+import {useApi} from "../../Api";
 
 export const GET_ITEM = gql`query($id: Int!) {
     items(id: $id) {
@@ -26,7 +27,7 @@ type TabContentRenderer = (item: Item, reloadData: () => void) => ReactNode
 
 const tabs: { [key: string]: TabContentRenderer } = {
     "details": (item, reloadData) => <DetailsTab item={item} reloadData={reloadData}/>,
-    // "events": (item, reloadData) => <EventsTab item={item} reloadData={reloadData}/>,
+    "events": (item, reloadData) => <EventsTab item={item} reloadData={reloadData}/>,
     // "childLocations": (item, reloadData) => <ChildLocationsTab item={item} reloadData={reloadData}/>
 }
 
@@ -48,16 +49,16 @@ function DetailsTab({item, reloadData}: TabContentProps) {
 //     </Col>
 // }
 //
-// function EventsTab({item}: TabContentProps) {
-//     return <Col span={24} style={{margin: "16px 0"}}>
-//         <Card bordered={false} title={"Events"}>
-//             <LocationEventsTable events={item.events}/>
-//         </Card>
-//     </Col>
-// }
+function EventsTab({item}: TabContentProps) {
+    return <Col span={24} style={{margin: "16px 0"}}>
+        <Card bordered={false} title={"Events"}>
+            <ItemEventsTable events={item.events}/>
+        </Card>
+    </Col>
+}
 
 export function ItemDetailsView() {
-    const client = useGraphQLClient()
+    const api = useApi()
     const id = parseInt(useParams().id!!)
     const [reloadFlag, setReloadFlag] = useState<boolean>(false)
     const [selectedTab, setSelectedTab] = useState<string>("details")
@@ -66,8 +67,8 @@ export function ItemDetailsView() {
             setReloadFlag(false)
             return
         }
-        return (await client.request<{ items: Item[] }>(GET_ITEM, {id})).items[0]
-    }, [client, id, reloadFlag, setReloadFlag])
+        return (await api.request<{ items: Item[] }>(GET_ITEM, {id})).items[0]
+    }, [api, id, reloadFlag, setReloadFlag])
 
     if (loading) return <Spin/>
     if (!item) return <Empty description={"No items found"}>
@@ -82,7 +83,7 @@ export function ItemDetailsView() {
                 setSelectedTab(key)
             }}>
                 <Tabs.TabPane tab={"Details"} key={"details"}/>
-                <Tabs.TabPane tab={"Child locations"} key={"childLocations"}/>
+                {/*<Tabs.TabPane tab={"Child locations"} key={"childLocations"}/>*/}
                 <Tabs.TabPane tab={"Events"} key={"events"}/>
             </Tabs>}
         />

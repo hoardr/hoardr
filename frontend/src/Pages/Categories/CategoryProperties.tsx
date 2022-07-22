@@ -4,11 +4,11 @@ import {Button, Card, ConfigProvider, Empty, message, Popconfirm, Space, Table} 
 import {ColumnsType} from "antd/lib/table";
 import {ModalFormButton} from "../../Components/ModalCard";
 import {gql} from "graphql-request";
-import {useGraphQLClient} from "../../App";
 import {ExclamationCircleOutlined, PlusOutlined} from "@ant-design/icons";
 import {BiUnlink} from "react-icons/bi";
 import {PropertyForm} from "../../Components/Property/PropertyForm";
 import {CategoryLink} from "../../Components/Category/CategoryLink";
+import {useApi} from "../../Api";
 
 const ADD_PROPERTY = gql`mutation($input: AddPropertyInput!) {
     addProperty(input: $input) {
@@ -59,11 +59,11 @@ export function RemovePropertyFromCategoryButton({
     category,
     onUpdate
 }: { property: Property, category: Category, onUpdate?: () => void }) {
-    const client = useGraphQLClient()
+    const api = useApi()
     const removeCategoryProperty = useCallback(async () => {
-        await client.request(REMOVE_CATEGORY_PROPERTY, {input: {categoryId: category.id, propertyId: property.id}})
+        await api.request(REMOVE_CATEGORY_PROPERTY, {input: {categoryId: category.id, propertyId: property.id}})
         onUpdate && onUpdate()
-    }, [client, category.id, onUpdate, property.id])
+    }, [api, category.id, onUpdate, property.id])
     return <Popconfirm title={`Remove property from ${property.category.name}?`}
                        icon={<ExclamationCircleOutlined style={{color: "red"}}/>}
                        onConfirm={async () => await removeCategoryProperty()}>
@@ -72,11 +72,11 @@ export function RemovePropertyFromCategoryButton({
 }
 
 function NewPropertyButton({category, onUpdate}: { category: Category, onUpdate?: () => void }) {
-    const client = useGraphQLClient()
+    const api = useApi()
     const addProperty = useCallback(async (categoryId: number, name: string, type: string) => {
-        await client.request<{ addProperty: Property }>(ADD_PROPERTY, {input: {categoryId, name, type}})
+        await api.request<{ addProperty: Property }>(ADD_PROPERTY, {input: {categoryId, name, type}})
         onUpdate && onUpdate()
-    }, [client, onUpdate]);
+    }, [api, onUpdate]);
     return <ModalFormButton
         title={"New property"}
         button={(openModal) => <Button type={"primary"} size={"small"} icon={<PlusOutlined/>}

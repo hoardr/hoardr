@@ -1,6 +1,5 @@
 import {gql} from "graphql-request";
-import {useGraphQLClient} from "../../App";
-import React, {ReactNode, useState} from "react";
+import React, {ReactNode, useEffect, useState} from "react";
 import {Category} from "../../Api/Types";
 import {Button, Card, Col, Empty, PageHeader, Row, Spin, Tabs, Typography} from "antd";
 import {BreadCrumbs} from "./BreadCrumbs";
@@ -8,8 +7,9 @@ import {CategoryPropertiesCard} from "./CategoryProperties";
 import {Link, useParams} from "react-router-dom";
 import {CategoryEventsTable} from "./CategoryEventsTable";
 import {ChildCategoriesCard} from "./CategoriesCard";
-import {useAsyncMemo} from "../../Util/useAsyncMemo";
 import {ItemsCard} from "../../Components/Item/ItemsCard";
+import {CategoryModel} from "../../State";
+import {useStore} from "../../App";
 
 export const GET_CATEGORY = gql`query($id: Int!) {
     categories(id: $id) {
@@ -59,17 +59,17 @@ function EventsTab({category}: TabContentProps) {
 }
 
 export function CategoryDetailsView() {
-    const client = useGraphQLClient()
     const id = parseInt(useParams().id!!)
-    const [reloadFlag, setReloadFlag] = useState<boolean>(false)
+    const {categoryStore} = useStore()
     const [selectedTab, setSelectedTab] = useState<string>("details")
-    const [{loading, value: category}, reloadData] = useAsyncMemo(async () => {
-        if (reloadFlag) {
-            setReloadFlag(false)
-            return
-        }
-        return (await client.request<{ categories: Category[] }>(GET_CATEGORY, {id})).categories[0]
-    }, [client, id, reloadFlag, setReloadFlag])
+    const [loading, setLoading] = useState(true)
+    const [category, setCategory] = useState<typeof CategoryModel>(undefined)
+    useEffect(() => {
+        categoryStore.getOrLoad(id).then(c => {
+            setCategory(c)
+            setLoading(false)
+        })
+    }, [id, setCategory, setLoading])
 
     if (loading) return <Spin/>
     if (!category) return <Empty description={"No category found"}><Button type={"primary"}><Link to={"/categories"}>Back
@@ -88,7 +88,7 @@ export function CategoryDetailsView() {
             </Tabs>}
         />
         <Row gutter={16}>
-            {tabs[selectedTab](category, reloadData)}
+            {tabs[selectedTab](category, () => {})}
         </Row>
     </>
 }

@@ -1,9 +1,9 @@
 import {gql} from "graphql-request";
-import {useGraphQLClient} from "../../App";
 import React, {useEffect, useState} from "react";
 import {Item} from "../../Api/Types";
 import {Breadcrumb, Spin} from "antd";
 import {ItemsCard} from "../../Components/Item/ItemsCard";
+import {useApi} from "../../Api";
 
 export const GET_ALL_ITEMS = gql`query {
     items {
@@ -15,7 +15,7 @@ export const GET_ALL_ITEMS = gql`query {
 }`
 
 export function ItemsView() {
-    const client = useGraphQLClient()
+    const api = useApi()
     const [items, setItems] = useState<Item[] | undefined>(undefined)
     const [reloadFlag, setReloadFlag] = useState(false)
     useEffect(() => {
@@ -23,10 +23,10 @@ export function ItemsView() {
             setReloadFlag(false)
             return
         }
-        client.request<{ items: Item[] }>(GET_ALL_ITEMS).then(value => {
+        api.request<{ items: Item[] }>(GET_ALL_ITEMS).then(value => {
             setItems(value.items)
         })
-    }, [client, reloadFlag, setReloadFlag])
+    }, [api, reloadFlag, setReloadFlag])
     if (items === undefined) return <Spin/>
 
     return <>

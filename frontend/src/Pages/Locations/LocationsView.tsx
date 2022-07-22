@@ -1,9 +1,9 @@
 import {gql} from "graphql-request";
-import {useGraphQLClient} from "../../App";
 import React, {useEffect, useState} from "react";
 import {Location} from "../../Api/Types";
 import {Breadcrumb, Spin} from "antd";
 import {LocationsCard} from "./LocationsCard";
+import {useApi} from "../../Api";
 
 export const GET_ALL_LOCATIONS = gql`query {
     locations {
@@ -17,7 +17,7 @@ export const GET_ALL_LOCATIONS = gql`query {
 }`
 
 export function LocationsView() {
-    const client = useGraphQLClient()
+    const api = useApi()
     const [locations, setLocations] = useState<Location[] | undefined>(undefined)
     const [reloadFlag, setReloadFlag] = useState(false)
     useEffect(() => {
@@ -25,10 +25,10 @@ export function LocationsView() {
             setReloadFlag(false)
             return
         }
-        client.request<{ locations: Location[] }>(GET_ALL_LOCATIONS).then(value => {
+        api.request<{ locations: Location[] }>(GET_ALL_LOCATIONS).then(value => {
             setLocations(value.locations)
         })
-    }, [client, reloadFlag, setReloadFlag])
+    }, [api, reloadFlag, setReloadFlag])
     if (locations === undefined) return <Spin/>
 
     return <>

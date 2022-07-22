@@ -1,10 +1,10 @@
 import {FormProps} from "antd/lib/form/Form";
-import {Category, Item, Property, PropertyValueType} from "../../Api/Types";
+import {Item, Property, PropertyValueType} from "../../Api/Types";
 import {ConfigProvider, Empty, Form, Input} from "antd";
 import React, {useCallback} from "react";
 import {gql} from "graphql-request";
 import {SearchSelect, SelectProps} from "../Form/SearchSelect";
-import {useGraphQLClient} from "../../App";
+import {useApi} from "../../Api";
 
 export type ItemPropertyFormProps =
     Omit<FormProps, 'initialValues'>
@@ -40,10 +40,10 @@ const FIND_ITEMS_BY_NAME = gql`query($name: String!) {
 }`
 
 export function ItemSelect(props: SelectProps<Item>) {
-    const client = useGraphQLClient()
+    const api = useApi()
     const search = useCallback(async (name: string) =>
-            (await client.request<{ items: Item[] }>(FIND_ITEMS_BY_NAME, {name})).items,
-        [client])
+            (await api.request<{ items: Item[] }>(FIND_ITEMS_BY_NAME, {name})).items,
+        [api])
     return <ConfigProvider
         renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No items"}/>}>
         <SearchSelect search={search} {...props}/>
@@ -55,10 +55,10 @@ const FIND_PROPERTIES_BY_NAME = gql`query($name: String!) {
 }`
 
 export function PropertySelect(props: SelectProps<Property>) {
-    const client = useGraphQLClient()
+    const api = useApi()
     const search = useCallback(async (name: string) =>
-            (await client.request<{ properties: Property[] }>(FIND_PROPERTIES_BY_NAME, {name})).properties,
-        [client])
+            (await api.request<{ properties: Property[] }>(FIND_PROPERTIES_BY_NAME, {name})).properties,
+        [api])
     return <ConfigProvider
         renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No properties"}/>}>
         <SearchSelect search={search} {...props}/>

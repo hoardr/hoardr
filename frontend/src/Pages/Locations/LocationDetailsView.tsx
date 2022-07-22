@@ -1,5 +1,4 @@
 import {gql} from "graphql-request";
-import {useGraphQLClient} from "../../App";
 import React, {ReactNode, useState} from "react";
 import {Location} from "../../Api/Types";
 import {Button, Card, Col, Empty, PageHeader, Row, Spin, Tabs, Typography} from "antd";
@@ -9,6 +8,7 @@ import {useAsyncMemo} from "../../Util/useAsyncMemo";
 import {LocationEventsTable} from "./LocationEventsTable";
 import {ChildLocationsCard} from "./LocationsCard";
 import {ItemsCard} from "../../Components/Item/ItemsCard";
+import {useApi} from "../../Api";
 
 export const GET_LOCATION = gql`query($id: Int!) {
     locations(id: $id) {
@@ -57,7 +57,7 @@ function EventsTab({location}: TabContentProps) {
 }
 
 export function LocationDetailsView() {
-    const client = useGraphQLClient()
+    const api = useApi()
     const id = parseInt(useParams().id!!)
     const [reloadFlag, setReloadFlag] = useState<boolean>(false)
     const [selectedTab, setSelectedTab] = useState<string>("details")
@@ -66,8 +66,8 @@ export function LocationDetailsView() {
             setReloadFlag(false)
             return
         }
-        return (await client.request<{ locations: Location[] }>(GET_LOCATION, {id})).locations[0]
-    }, [client, id, reloadFlag, setReloadFlag])
+        return (await api.request<{ locations: Location[] }>(GET_LOCATION, {id})).locations[0]
+    }, [api, id, reloadFlag, setReloadFlag])
 
     if (loading) return <Spin/>
     if (!category) return <Empty description={"No location found"}>

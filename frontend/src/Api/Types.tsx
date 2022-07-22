@@ -1,6 +1,7 @@
 export type Category = {
     id: number
     name: string
+    description: string
     children: Category[]
     allItems: Item[]
     items: Item[]
@@ -22,6 +23,13 @@ export type Location = {
 }
 
 export type LocationEvent = {
+    id: number
+    type: string
+    data: { [key: string]: string }
+    createdDate: string
+}
+
+export type ItemEvent = {
     id: number
     type: string
     data: { [key: string]: string }
@@ -63,5 +71,6 @@ export type Item = {
     category: Category
     allProperties: ItemProperty[]
     propertyValues: PropertyValue[]
+    events: ItemEvent[]
 }
 

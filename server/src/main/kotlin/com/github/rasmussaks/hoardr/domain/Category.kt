@@ -32,8 +32,10 @@ class Category(
     var id: Long = 0
 
     fun addProperty(property: Property) {
-        properties.add(property)
-        events.add(propertyAddedEvent(property))
+        if (properties.none { it.id == property.id }) {
+            properties.add(property)
+            events.add(propertyAddedEvent(property))
+        }
     }
 
     fun removeProperty(property: Property) {

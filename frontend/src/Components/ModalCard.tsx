@@ -1,7 +1,5 @@
-import {Button, Card, Form, FormInstance, Modal} from "antd";
+import {Form, FormInstance, Modal} from "antd";
 import React, {ComponentProps, ReactNode, useCallback, useState} from "react";
-import {PlusOutlined} from "@ant-design/icons";
-import {Store} from "antd/lib/form/interface";
 
 export type ModalButtonProps = {
     button: (openModal: () => void) => React.ReactNode,

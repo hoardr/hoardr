@@ -7,7 +7,7 @@ import javax.persistence.*
 
 @Entity
 class Item(
-    var name: String? = null,
+    var name: String,
     val quantity: Long = 1,
     @ManyToOne(fetch = FetchType.LAZY)
     var category: Category,

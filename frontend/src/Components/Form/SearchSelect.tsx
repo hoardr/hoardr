@@ -1,5 +1,4 @@
 import React, {ReactNode, useCallback, useState} from "react";
-import {useGraphQLClient} from "../../App";
 import {debounce} from "lodash-es";
 import {Select, Typography} from "antd";
 
@@ -23,14 +22,13 @@ export function SearchSelect<T extends EntityWithAllParents>({
     value, onChange, initialValue, search, ...props
 }: SearchSelectProps<T>) {
     const [data, setData] = useState<T[]>(initialValue ? [initialValue] : [])
-    const client = useGraphQLClient()
     const loadData = useCallback(debounce((name: string) => {
         if (name) {
             search(name).then(values => {
                 setData(values)
             })
         }
-    }, 300), [setData, client])
+    }, 300), [setData])
     return <Select
         showSearch
         showArrow={false}

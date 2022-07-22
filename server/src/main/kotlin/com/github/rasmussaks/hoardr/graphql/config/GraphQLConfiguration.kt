@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture
 class GraphQLConfiguration(
     private val strategy: AsyncTransactionalExecutionStrategy
 ) : GraphQlSourceBuilderCustomizer {
-    override fun customize(builder: GraphQlSource.Builder) {
+    override fun customize(builder: GraphQlSource.SchemaResourceBuilder) {
         builder.configureGraphQl {
             it.queryExecutionStrategy(strategy)
             it.mutationExecutionStrategy(strategy)

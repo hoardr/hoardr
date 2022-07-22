@@ -1,0 +1,30 @@
+POST localhost:4000/dummyTemplate
+
+###
+
+GRAPHQL localhost:4000/graphql
+
+query Categories {
+    categories {id name events { id type data createdAt} children {id name}}
+}
+
+###
+GRAPHQL localhost:4000/graphql
+
+mutation addCategory {
+  addCategory(input: {name: "Category"}) { id name }
+}
+
+###
+GRAPHQL localhost:4000/graphql
+
+mutation addCategoryWithParent {
+  addCategory(input: {name: "Category with parent", parentId: 1}) { id name }
+}
+
+###
+GRAPHQL localhost:4000/graphql
+
+query categorySearch {
+  categories(name: "parent") { id name createdAt parent {id} events {id type data}}
+}

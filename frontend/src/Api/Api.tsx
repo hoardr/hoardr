@@ -1,5 +1,8 @@
 import {gql, GraphQLClient} from "graphql-request";
 import {RequestDocument, Variables} from "graphql-request/dist/types";
+import {Category, Item, Location} from "./Types";
+import {makeAutoObservable} from "mobx";
+import {Axios} from "axios";
 
 export default class Api {
     private readonly client: GraphQLClient
@@ -8,9 +11,11 @@ export default class Api {
     public readonly item: ItemApi
 
     constructor(client: GraphQLClient) {
+        makeAutoObservable(this)
+        const axios = new Axios({baseURL: "http://localhost:4000", transformResponse: data => JSON.parse(data)})
         this.client = client
-        this.location = new LocationApi(client)
-        this.category = new CategoryApi(client)
+        this.location = new LocationApi(client, axios)
+        this.category = new CategoryApi(client, axios)
         this.item = new ItemApi(client)
     }
 
@@ -21,7 +26,6 @@ export default class Api {
 
 
 export class LocationApi {
-    private client: GraphQLClient
 
     private static DELETE = gql`mutation($input: DeleteLocationInput!) {
         deleteLocation(input: $input)
@@ -35,8 +39,28 @@ export class LocationApi {
         addLocation(input: $input) { id }
     }`
 
-    constructor(client: GraphQLClient) {
-        this.client = client
+    private static GET = gql`query($id: Int) {
+        locations(id: $id) {
+            id
+            name
+            allStockItems { id quantity item { id name category { id name } } }
+            children { id name }
+            stockItems { id quantity item { id name } }
+            parent { id name }
+        }
+    }`
+
+    constructor(private client: GraphQLClient, private axios: Axios) {
+
+    }
+
+    public async getAll(): Promise<Location[]> {
+        // return (await this.axios.get<Location[]>("/v1/categories")).data
+        return (await this.client.request<{ locations: Location[] }>(LocationApi.GET)).locations
+    }
+
+    public async get(id: number): Promise<Location[]> {
+        return (await this.client.request<{ locations: Location[] }>(LocationApi.GET, {id})).locations
     }
 
     public async delete(locationId: number) {
@@ -53,7 +77,10 @@ export class LocationApi {
 }
 
 export class CategoryApi {
-    private client: GraphQLClient
+
+    constructor(private client: GraphQLClient, private axios: Axios) {
+
+    }
 
     private static DELETE = gql`mutation($input: DeleteCategoryInput!) {
         deleteCategory(input: $input)
@@ -69,8 +96,35 @@ export class CategoryApi {
         addCategory(input: $input) { id }
     }`
 
-    constructor(client: GraphQLClient) {
-        this.client = client
+    private static GET = gql`query($id: Int) {
+        categories(id: $id) {
+            id
+            name
+            allItems { id name category { id name }  }
+            children { id name }
+            items { id name }
+            parent { id name }
+        }
+    }`
+    private static GET_ONE = gql`query($id: Int!) {
+        category(id: $id) {
+            id
+            name
+            allItems { id name category { id name }  }
+            children { id name }
+            items { id name }
+            parent { id name }
+        }
+    }`
+
+    public async getAll(): Promise<Category[]> {
+        // return (await this.axios.get<Category[]>("/v1/categories")).data
+        return (await this.client.request<{ categories: Category[] }>(CategoryApi.GET)).categories
+    }
+
+    public async get(id: number): Promise<Category> {
+        // return (await this.axios.get<Category[]>("/v1/categories", {params: {id}})).data[0]
+        return (await this.client.request<{ category: Category }>(CategoryApi.GET_ONE, {id})).category
     }
 
     public async delete(categoryId: number) {
@@ -100,6 +154,18 @@ export class ItemApi {
     private static SET_PROPERTY_VALUE = gql`mutation($input: SetPropertyValueInput!){
         setPropertyValue(input: $input) { id }
     }`
+
+    private static GET_ALL_ITEMS = gql`query {
+        items {
+            id
+            name
+            category { id name }
+        }
+    }`
+
+    public async getAll(): Promise<Item[]> {
+        return (await this.client.request<{ items: Item[] }>(ItemApi.GET_ALL_ITEMS)).items
+    }
 
     public async add(name: string, categoryId: number, locationId: number, quantity: number = 1) {
         await this.client.request(ItemApi.ADD, {input: {name, categoryId, locationId, quantity}})

@@ -1,9 +1,9 @@
 package com.github.rasmussaks.hoardr.domain
 
 import com.github.rasmussaks.hoardr.domain.event.LocationEvent
-import com.github.rasmussaks.hoardr.domain.event.parentChangedEvent
 import com.github.rasmussaks.hoardr.domain.event.childLocationAddedEvent
 import com.github.rasmussaks.hoardr.domain.event.childLocationRemovedEvent
+import com.github.rasmussaks.hoardr.domain.event.parentChangedEvent
 import javax.persistence.*
 
 @Entity

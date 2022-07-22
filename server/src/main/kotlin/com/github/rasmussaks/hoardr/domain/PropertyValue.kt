@@ -1,5 +1,6 @@
 package com.github.rasmussaks.hoardr.domain
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import javax.persistence.*
 
 @Entity
@@ -7,6 +8,7 @@ import javax.persistence.*
 class PropertyValue(
     var value: String,
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("categories")
     var property: Property,
     @ManyToOne(fetch = FetchType.LAZY)
     var item: Item

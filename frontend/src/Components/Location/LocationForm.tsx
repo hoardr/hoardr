@@ -2,17 +2,17 @@ import {ConfigProvider, Empty, Form, Input} from "antd";
 import React, {useCallback} from "react";
 import {FormProps} from "antd/lib/form/Form";
 import {Location} from "../../Api/Types";
-import {useGraphQLClient} from "../../App";
 import {gql} from "graphql-request";
 import {SearchSelect, SelectProps} from "../Form/SearchSelect";
+import {useApi} from "../../Api";
 
 const FIND_LOCATIONS_BY_NAME = gql`query($name: String!) {
     locations(name: $name) { id name allParents { id name } }
 }`
 
 export function LocationSelect(props: SelectProps<Location>) {
-    const client = useGraphQLClient()
-    const search = useCallback(async (name: string) => (await client.request<{ locations: Location[] }>(FIND_LOCATIONS_BY_NAME, {name})).locations, [client])
+    const api = useApi()
+    const search = useCallback(async (name: string) => (await api.request<{ locations: Location[] }>(FIND_LOCATIONS_BY_NAME, {name})).locations, [api])
     return <ConfigProvider
         renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No locations"}/>}>
         <SearchSelect search={search} {...props} />
