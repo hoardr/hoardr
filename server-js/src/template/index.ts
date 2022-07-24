@@ -50,8 +50,15 @@ function flatten<T extends Tree<T> & Identifiable>(templates?: T[]): Flattened<T
         refMap = {
             ...refMap,
             [t.id ?? t.name]: {...t, children: t.children?.map(c => c.id ?? c.name)},
-            ...flatten(t.children)
         }
+        const flattened = flatten(t.children)
+        const fKeys = Object.keys(flattened)
+        const rKeys = Object.keys(refMap)
+        const duplicateKeys = fKeys.filter(k => rKeys.includes(k))
+        if (duplicateKeys.length > 0) {
+            throw new Error(`Duplicate ids/names found: ${duplicateKeys}`)
+        }
+        refMap = {...refMap, ...flattened}
     })
     return refMap
 }
