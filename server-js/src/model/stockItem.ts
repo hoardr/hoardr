@@ -2,6 +2,7 @@ import {MutationInput, Resolver} from "./index";
 import {AllowNull, BelongsTo, Column, ForeignKey, Model, Table} from "sequelize-typescript";
 import Item from "./item";
 import Location from "./location";
+import {transactional} from "./transactional";
 
 @Table
 export default class StockItem extends Model {
@@ -25,11 +26,11 @@ export default class StockItem extends Model {
     @BelongsTo(() => Location)
     declare location: Location;
 
-    static add: Resolver<AddStockItemInput> = async (parent, {input: {itemId, locationId, quantity}}) => {
+    static add: Resolver<AddStockItemInput> = transactional(async (parent, {input: {itemId, locationId, quantity}}) => {
         return await StockItem.create({
             itemId, locationId, quantity
         }, {include: ['item', 'location']})
-    }
+    })
 
     static find: Resolver<FindStockItemsInput> = (parent, {locationId, itemId}) => {
         return StockItem.findAll({

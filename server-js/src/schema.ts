@@ -2,8 +2,6 @@ import {buildSchema} from "graphql";
 
 // language=GraphQL
 export default buildSchema(`
-    scalar Int
-    scalar String
     scalar JSON
     scalar DateTime
     scalar Boolean
@@ -12,8 +10,9 @@ export default buildSchema(`
         id: Int!
         name: String!
         type: PropertyType!
-        createdAt: DateTime
-        updatedAt: DateTime
+        auditLog: [AuditLog!]!
+        createdAt: DateTime!
+        updatedAt: DateTime!
         categories: [Category!]!
     }
 
@@ -40,7 +39,7 @@ export default buildSchema(`
         parent: Category
         children: [Category!]!
         properties: [Property!]!
-        events: [CategoryEvent!]!
+        auditLog: [AuditLog!]!
         items: [Item!]!
         createdAt: DateTime!
         updatedAt: DateTime!
@@ -48,33 +47,17 @@ export default buildSchema(`
         allParents: [Category!]!
     }
 
-    type CategoryEvent {
-        id: Int!
-        type: String!
-        data: JSON!
-        category: Category!
-        createdAt: DateTime!
-    }
-
     type Location {
         id: Int!
         name: String!
         parent: Location
         children: [Location!]!
-        events: [LocationEvent!]!
-        createdAt: DateTime
-        updatedAt: DateTime
-        stockItems: [StockItem!]!
+        auditLog: [AuditLog!]!
+        createdAt: DateTime!
+        updatedAt: DateTime!
+        stock: [StockItem!]!
         allStockItems: [StockItem!]!
         allParents: [Location!]!
-    }
-
-    type LocationEvent {
-        id: Int!
-        type: String!
-        data: JSON!
-        location: Location!
-        createdAt: DateTime
     }
 
     type Item {
@@ -84,17 +67,9 @@ export default buildSchema(`
         propertyValues: [PropertyValue!]!
         allCategories: [Category!]!
         allProperties: [ItemProperty!]!
-        events: [ItemEvent!]!
-        createdAt: DateTime
-        updatedAt: DateTime
-    }
-
-    type ItemEvent {
-        id: Int!
-        type: String!
-        data: JSON!
-        item: Item!
-        createdAt: DateTime
+        auditLog: [AuditLog!]!
+        createdAt: DateTime!
+        updatedAt: DateTime!
     }
 
     type StockItem {
@@ -103,21 +78,32 @@ export default buildSchema(`
         location: Location!
         item: Item!
     }
+    
+    type AuditLog {
+        id: Int!
+        entity: String!
+        entityId: Int!
+        action: String!
+        data: JSON!
+        createdAt: DateTime!
+    }
 
     type Query {
         category(id: Int!): Category
         categories(id: Int, name: String): [Category!]!
-        
+
         item(id: Int!): Item
         items(id: Int, name: String, categoryId: Int): [Item!]!
-        
+
         location(id: Int!): Location
         locations(id: Int, name: String): [Location!]!
-        
+
         property(id: Int!): Property
         properties(id: Int, name: String): [Property!]!
-        
+
         stockItems(locationId: Int, itemId: Int): [StockItem!]!
+        
+        auditLog(entity: String, entityId: String): [AuditLog]!
     }
 
     input AddLocationInput {
@@ -149,7 +135,7 @@ export default buildSchema(`
     input SetPropertyValueInput {
         itemId: Int!
         propertyId: Int!
-        value: String!
+        value: String
     }
 
     input RemoveCategoryPropertyInput {
@@ -174,7 +160,7 @@ export default buildSchema(`
     input DeleteLocationInput {
         locationId: Int!
     }
-    
+
     input AddStockItemInput {
         itemId: Int!,
         locationId: Int!,
@@ -187,7 +173,6 @@ export default buildSchema(`
         deleteCategory(input: DeleteCategoryInput!): Int!
 
         addProperty(input: AddPropertyInput!): Property!
-        setPropertyValue(input: SetPropertyValueInput!): Item!
 
         addCategoryProperty(input: AddCategoryPropertyInput!): Category!
         removeCategoryProperty(input: RemoveCategoryPropertyInput!): Category!
@@ -197,7 +182,8 @@ export default buildSchema(`
         deleteLocation(input: DeleteLocationInput!): Int!
 
         addItem(input: AddItemInput!): Item!
-        
+        setPropertyValue(input: SetPropertyValueInput!): Item!
+
         addStockItem(input: AddStockItemInput!): StockItem!
     }
 `)

@@ -1,10 +1,11 @@
 import {INTEGER, Op} from "sequelize";
 import {MutationInput, Resolver} from "./index";
 import {AllowNull, BelongsTo, BelongsToMany, Column, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
-import CategoryEvent from "./categoryEvent";
 import Property from "./property";
 import CategoryProperty from "./categoryProperty";
 import Item from "./item";
+import AuditLog from "./auditLog";
+import {transactional} from "./transactional";
 
 @Table
 export default class Category extends Model {
@@ -25,22 +26,17 @@ export default class Category extends Model {
     @HasMany(() => Category)
     declare children: Category[];
 
-    @HasMany(() => CategoryEvent)
-    declare events: CategoryEvent[];
-
     @BelongsToMany(() => Property, () => CategoryProperty)
     declare properties: Property[];
 
     @HasMany(() => Item)
     declare items: Item[];
 
-    static add: Resolver<AddCategoryInput> = async (parent, {input: {name, parentId}}) => {
-        return Category.create({
-            name,
-            parentId,
-            events: [{type: "CREATED", data: {name, parentId}}],
-        }, {include: ['events']})
-    }
+    static add: Resolver<AddCategoryInput> = transactional(async (parent, {input: {name, parentId}}) => {
+        return await Category.create({
+            name, parentId,
+        })
+    })
 
     static query: Resolver<FindCategoriesInput> = async (parent, {id, name}) => {
         return Category.findAll({
@@ -51,17 +47,22 @@ export default class Category extends Model {
         })
     }
 
-    static setParent: Resolver<SetCategoryParentInput> = async (parent, {input: {categoryId, parentId}}) => {
+    static setParent: Resolver<SetCategoryParentInput> = transactional(async (parent, {
+        input: {
+            categoryId,
+            parentId
+        }
+    }) => {
         const category = (await Category.findByPk(categoryId))!!
         category.parentId = parentId;
         return await category.save()
-    }
+    })
 
 
-    static delete: Resolver<DeleteCategoryInput> = async (parent, {input: {categoryId}}) => {
+    static delete: Resolver<DeleteCategoryInput> = transactional(async (parent, {input: {categoryId}}) => {
         await (await Category.findByPk(categoryId))!!.destroy()
         return categoryId
-    }
+    })
 
     static queryOne: Resolver<{ id: number }> = async (parent, {id}) => {
         return await Category.findByPk(id)
@@ -74,7 +75,7 @@ export default class Category extends Model {
         },
         Category: {
             children: (parent: Category) => parent.$get('children'),
-            events: (parent: Category) => parent.$get('events'),
+            auditLog: (parent: Category) => AuditLog.findByEntity(parent),
             properties: (parent: Category) => parent.$get('properties'),
             parent: (parent: Category) => parent.$get('parent'),
             items: (parent: Category) => parent.$get('items'),

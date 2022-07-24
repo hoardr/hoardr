@@ -28,3 +28,14 @@ GRAPHQL localhost:4000/graphql
 query categorySearch {
   categories(name: "parent") { id name createdAt parent {id} events {id type data}}
 }
+
+###
+GRAPHQL localhost:4000/graphql
+
+mutation SetPropertyValue
+{
+setPropertyValue(input: {itemId: 1, propertyId: 1, value: "Value!"})
+}
+
+###
+POST localhost:4000/dummyTemplate

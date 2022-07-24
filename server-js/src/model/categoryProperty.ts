@@ -2,6 +2,7 @@ import {AllowNull, Column, ForeignKey, Model, Table} from "sequelize-typescript"
 import Category from "./category";
 import Property from "./property";
 import {MutationInput, Resolver} from "./index";
+import {transactional} from "./transactional";
 
 @Table
 export default class CategoryProperty extends Model {
@@ -15,7 +16,7 @@ export default class CategoryProperty extends Model {
     @Column
     declare propertyId: number;
 
-    static add: Resolver<AddCategoryPropertyInput> = async (parent, {
+    static add: Resolver<AddCategoryPropertyInput> = transactional(async (parent, {
         input: {
             categoryId,
             propertyId
@@ -25,8 +26,9 @@ export default class CategoryProperty extends Model {
             categoryId, propertyId
         });
         return await Category.findByPk(categoryId)
-    }
-    static remove: Resolver<RemoveCategoryPropertyInput> = async (parent, {
+    })
+
+    static remove: Resolver<RemoveCategoryPropertyInput> = transactional(async (parent, {
         input: {
             categoryId,
             propertyId
@@ -35,7 +37,7 @@ export default class CategoryProperty extends Model {
         const prop = await CategoryProperty.findOne({where: {categoryId, propertyId}});
         await prop?.destroy()
         return await Category.findByPk(categoryId)
-    }
+    })
 
     static resolver = {
         Mutation: {

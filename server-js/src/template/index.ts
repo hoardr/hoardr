@@ -1,4 +1,4 @@
-import {Category, CategoryProperty, Item, Location, Property, StockItem} from "../model";
+import {Category, CategoryProperty, Item, Location, Property, sequelize, StockItem} from "../model";
 import {Model} from "sequelize-typescript";
 
 export type PropertyTemplate = {
@@ -93,35 +93,37 @@ async function createFromList<T, V>(templates: T[] | undefined, creator: (templa
 }
 
 export async function applyTemplate(template: Template) {
-    const properties = await createFromIdentifiables(template.properties, t => Property.create({
-        name: t.name,
-        type: t.type
-    }))
-    const [flatCategories, createdCategories] = await createFromTrees(template.categories, t => Category.create({
-        name: t.name,
-        description: t.description,
-    }))
-    for (const [k, category] of Object.entries(flatCategories)) {
-        if (!category.properties) continue
-        for (const prop of category.properties) {
-            await CategoryProperty.create({
-                categoryId: createdCategories[k].id,
-                propertyId: properties[prop].id
-            })
+    await sequelize.transaction(async () => {
+        const properties = await createFromIdentifiables(template.properties, t => Property.create({
+            name: t.name,
+            type: t.type
+        }))
+        const [flatCategories, createdCategories] = await createFromTrees(template.categories, t => Category.create({
+            name: t.name,
+            description: t.description,
+        }))
+        for (const [k, category] of Object.entries(flatCategories)) {
+            if (!category.properties) continue
+            for (const prop of category.properties) {
+                await CategoryProperty.create({
+                    categoryId: createdCategories[k].id,
+                    propertyId: properties[prop].id
+                })
+            }
         }
-    }
-    const items = await createFromIdentifiables(template.items, t => Item.create({
-        name: t.name,
-        categoryId: createdCategories[t.category].id
-    }))
+        const items = await createFromIdentifiables(template.items, t => Item.create({
+            name: t.name,
+            categoryId: createdCategories[t.category].id
+        }))
 
-    const [flatLocations, createdLocations] = await createFromTrees(template.locations, t => Location.create({
-        name: t.name,
-    }))
+        const [flatLocations, createdLocations] = await createFromTrees(template.locations, t => Location.create({
+            name: t.name,
+        }))
 
-    const stockItems = await createFromList(template.stock, t => StockItem.create({
-        quantity: t.quantity,
-        itemId: items[t.item].id,
-        locationId: createdLocations[t.location].id,
-    }))
+        const stockItems = await createFromList(template.stock, t => StockItem.create({
+            quantity: t.quantity,
+            itemId: items[t.item].id,
+            locationId: createdLocations[t.location].id,
+        }))
+    })
 }

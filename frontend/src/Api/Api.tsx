@@ -45,7 +45,7 @@ export class LocationApi {
             name
             allStockItems { id quantity item { id name category { id name } } }
             children { id name }
-            stockItems { id quantity item { id name } }
+            stock { id quantity item { id name } }
             parent { id name }
         }
     }`

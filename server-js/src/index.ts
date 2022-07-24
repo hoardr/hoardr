@@ -10,7 +10,7 @@ import dummyTemplate from "./template/dummy.template";
 
 async function startServer(typeDefs: IExecutableSchemaDefinition['typeDefs'], resolvers: IExecutableSchemaDefinition['resolvers']) {
     console.log("Syncing migrations")
-    await sequelize.sync();
+    await sequelize.sync(); // TODO replace with actual migrations
     console.log("Migrations synced")
     const app = express();
     const httpServer = http.createServer(app);

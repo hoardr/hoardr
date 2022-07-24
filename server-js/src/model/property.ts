@@ -2,6 +2,8 @@ import {MutationInput, Resolver} from "./index";
 import {AllowNull, BelongsToMany, Column, Model, Table} from "sequelize-typescript";
 import CategoryProperty from "./categoryProperty";
 import Category from "./category";
+import {Op} from "sequelize";
+import {transactional} from "./transactional";
 
 @Table
 export default class Property extends Model {
@@ -16,18 +18,30 @@ export default class Property extends Model {
     @BelongsToMany(() => Category, () => CategoryProperty)
     declare categories: Category[];
 
-    static add: Resolver<AddPropertyInput> = async (parent, {
+    static add: Resolver<AddPropertyInput> = transactional(async (parent, {
         input: {categoryId, name, type}
     }) => {
-        const property = await Property.create({name, type, categories: []})
+        const property = await Property.build({name, type})
         if (categoryId) {
             const category = (await Category.findByPk(categoryId))!!;
             await property.$add('categories', category)
         }
-        return property
+        return await property.save()
+    })
+
+    static query: Resolver<FindPropertiesInput> = async (parent, {id, name}) => {
+        return Property.findAll({
+            where: {
+                ...id ? {id} : {},
+                ...name ? {[Op.substring]: name} : {}
+            },
+        })
     }
 
     static resolver = {
+        Query: {
+            properties: Property.query,
+        },
         Mutation: {
             addProperty: Property.add
         },

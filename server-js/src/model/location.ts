@@ -1,8 +1,8 @@
 import {DataTypes, Op} from "sequelize";
-import {MutationInput, Resolver} from "./index";
+import {AuditLog, MutationInput, Resolver} from "./index";
 import {AllowNull, BelongsTo, Column, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 import StockItem from "./stockItem";
-import LocationEvent from "./locationEvent";
+import {transactional} from "./transactional";
 
 @Table
 export default class Location extends Model {
@@ -20,27 +20,24 @@ export default class Location extends Model {
     @HasMany(() => Location)
     declare children: Location[];
 
-    @HasMany(() => LocationEvent)
-    declare events: LocationEvent[];
-
     @HasMany(() => StockItem)
     declare stockItems: StockItem[];
 
 
-    static add: Resolver<AddLocationInput> = (parent, {input: {name, parentId}}) => {
-        return Location.create({
-            name,
-            parentId,
-            events: [{type: "CREATED", data: {name, parentId}}],
-            children: [],
-            stockItems: []
-        }, {include: ['events']})
-    }
-    static setParent: Resolver<SetLocationParentInput> = async (parent, {input: {locationId, parentId}}) => {
+    static add: Resolver<AddLocationInput> = transactional(async (parent, {input}) => {
+        return await Location.create(input)
+    })
+
+    static setParent: Resolver<SetLocationParentInput> = transactional(async (parent, {
+        input: {
+            locationId,
+            parentId
+        }
+    }) => {
         const location = (await Location.findByPk(locationId))!!
         location.parentId = parentId;
         return await location.save()
-    }
+    })
 
     static query: Resolver<FindLocationsInput> = async (parent, {id, name}) => {
         return Location.findAll({
@@ -55,10 +52,10 @@ export default class Location extends Model {
         return await Location.findByPk(id)
     }
 
-    static delete: Resolver<DeleteLocationInput> = async (parent, {input: {locationId}}) => {
+    static delete: Resolver<DeleteLocationInput> = transactional(async (parent, {input: {locationId}}) => {
         await (await Location.findByPk(locationId))?.destroy()
         return locationId
-    }
+    })
 
     static resolver = {
         Query: {
@@ -66,10 +63,10 @@ export default class Location extends Model {
             locations: Location.query,
         },
         Location: {
-            events: (parent: Location) => parent.$get('events'),
+            auditLog: (parent: Location) => AuditLog.find(Location.name, parent.id),
             children: (parent: Location) => parent.$get('children'),
             parent: (parent: Location) => parent.$get('parent'),
-            stockItems: (parent: Location) => parent.$get('stockItems'),
+            stock: (parent: Location) => parent.$get('stockItems'),
             allStockItems: () => [] // TODO
         },
         Mutation: {
