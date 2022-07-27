@@ -1,4 +1,4 @@
-import {Category, CategoryProperty, Item, Location, Property, sequelize, StockItem} from "../model";
+import {Category, CategoryProperty, Item, Location, Property, sequelize, StockItem} from "../storage/model";
 import {Model} from "sequelize-typescript";
 
 export type PropertyTemplate = {

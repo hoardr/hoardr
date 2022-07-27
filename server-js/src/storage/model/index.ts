@@ -32,16 +32,6 @@ models.forEach(m => {
     m.addHook('afterDestroy', AuditLog.logHook('DELETED'))
 })
 
-export function getSelectedRelations(info: GraphQLResolveInfo, ...required: string[]): string[] {
-    const selections = info.fieldNodes[0].selectionSet?.selections ?? [];
-    return [...new Set([...required, ...selections.filter(s => s.kind == 'Field' && s.selectionSet !== undefined).map(s => (s as FieldNode).name.value)])]
-}
-
-export function getSelectedAttributes(info: GraphQLResolveInfo, ...required: string[]): string[] {
-    const selections = info.fieldNodes[0].selectionSet?.selections ?? [];
-    return [...new Set([...required, ...selections.filter(s => s.kind == 'Field' && s.selectionSet === undefined).map(s => (s as FieldNode).name.value)])]
-}
-
 export type MutationInput<T> = { input: T }
 export type Resolver<T> = IFieldResolver<any, any, T>
 

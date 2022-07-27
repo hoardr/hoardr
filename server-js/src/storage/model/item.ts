@@ -5,7 +5,7 @@ import StockItem from "./stockItem";
 import Category from "./category";
 import PropertyValue from "./propertyValue";
 import AuditLog from "./auditLog";
-import {transactional} from "./utils";
+import {transactional} from "../utils";
 
 @Table
 export default class Item extends Model {

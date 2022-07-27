@@ -5,7 +5,7 @@ import Property from "./property";
 import CategoryProperty from "./categoryProperty";
 import Item from "./item";
 import AuditLog from "./auditLog";
-import {ancestors, descendants, transactional} from "./utils";
+import {ancestors, descendants, transactional} from "../utils";
 
 @Table
 export default class Category extends Model {

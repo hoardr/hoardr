@@ -2,7 +2,7 @@ import {DataTypes, Op} from "sequelize";
 import {AuditLog, MutationInput, Resolver} from "./index";
 import {AllowNull, BelongsTo, Column, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 import StockItem from "./stockItem";
-import {ancestors, descendants, transactional} from "./utils";
+import {ancestors, descendants, transactional} from "../utils";
 
 @Table
 export default class Location extends Model {

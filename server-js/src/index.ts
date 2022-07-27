@@ -1,6 +1,6 @@
 import express = require("express");
 import schema from "./schema";
-import {resolvers, sequelize} from "./model";
+import {resolvers, sequelize} from "./storage/model";
 import {ApolloServer} from "apollo-server-express";
 import http from "http";
 import {ApolloServerPluginDrainHttpServer} from "apollo-server-core";

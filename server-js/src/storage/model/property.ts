@@ -3,7 +3,7 @@ import {AllowNull, BelongsToMany, Column, ForeignKey, Model, Table} from "sequel
 import CategoryProperty from "./categoryProperty";
 import Category from "./category";
 import {Op} from "sequelize";
-import {transactional} from "./utils";
+import {transactional} from "../utils";
 
 @Table
 export default class Property extends Model {
