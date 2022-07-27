@@ -96,34 +96,48 @@ export class CategoryApi {
         addCategory(input: $input) { id }
     }`
 
-    private static GET = gql`query($id: Int) {
+    private static selection(s: string) {
+        return gql`
+            fragment innerSelection on Category {
+                id name description items { id name stock { id quantity location { id name }}} properties { id name type } ancestors { name description }
+            }
+            fragment selection on Category {
+                ...innerSelection
+                children { id name description items {id name} }
+                #items { id name category { id name ancestors { name } } stock { id quantity location { id name }} }
+                auditLog { id createdAt action entity entityId data}
+                ancestors { ...innerSelection }
+                descendants { ...innerSelection }
+                parent { id name }
+            }
+        ${s}`
+    }
+
+    private static GET = CategoryApi.selection(gql`query($id: Int) {
         categories(id: $id) {
-            id
-            name
-            allItems { id name category { id name }  }
-            children { id name }
-            items { id name }
-            parent { id name }
+            ...selection
         }
-    }`
-    private static GET_ONE = gql`query($id: Int!) {
+    }`)
+    private static GET_ONE = CategoryApi.selection(gql`query($id: Int!) {
         category(id: $id) {
-            id
-            name
-            allItems { id name category { id name }  }
-            children { id name }
-            items { id name }
-            parent { id name }
+            ...selection
         }
-    }`
+    }`)
+    private static GET_ROOT = CategoryApi.selection(gql`query {
+        categories(root: true) {
+            ...selection
+        }
+    }`)
 
     public async getAll(): Promise<Category[]> {
-        // return (await this.axios.get<Category[]>("/v1/categories")).data
         return (await this.client.request<{ categories: Category[] }>(CategoryApi.GET)).categories
     }
 
+    public async getRoot(): Promise<Category[]> {
+        return (await this.client.request<{ categories: Category[] }>(CategoryApi.GET_ROOT)).categories
+    }
+
     public async get(id: number): Promise<Category> {
-        // return (await this.axios.get<Category[]>("/v1/categories", {params: {id}})).data[0]
         return (await this.client.request<{ category: Category }>(CategoryApi.GET_ONE, {id})).category
     }
 
@@ -155,16 +169,37 @@ export class ItemApi {
         setPropertyValue(input: $input) { id }
     }`
 
-    private static GET_ALL_ITEMS = gql`query {
-        items {
+    private static selection(s: string) {
+        return gql`fragment selection on Item {
             id
             name
-            category { id name }
+            description
+            category { id name description ancestors { name } }
+            auditLog { id createdAt action entity entityId data}
+            stock { quantity location { id name description ancestors { name } }}
         }
-    }`
+        ${s}`
+    }
+
+    private static GET_ALL_ITEMS = ItemApi.selection(gql`query {
+        items {
+            ...selection
+        }
+    }`)
+
+    private static GET_BY_ID = ItemApi.selection(gql`query($id: Int!) {
+        item(id: $id) {
+            ...selection
+        }
+    }`)
+
 
     public async getAll(): Promise<Item[]> {
         return (await this.client.request<{ items: Item[] }>(ItemApi.GET_ALL_ITEMS)).items
+    }
+
+    public async get(id: Number): Promise<Item> {
+        return (await this.client.request<{ item: Item }>(ItemApi.GET_BY_ID, {id})).item
     }
 
     public async add(name: string, categoryId: number, locationId: number, quantity: number = 1) {

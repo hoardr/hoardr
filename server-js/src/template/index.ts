@@ -9,6 +9,7 @@ export type PropertyTemplate = {
 export type LocationTemplate = {
     id?: string
     name: string
+    description?: string
     children?: LocationTemplate[]
 }
 
@@ -21,6 +22,7 @@ export type StockItemTemplate = {
 export type ItemTemplate = {
     id?: string
     name: string
+    description?: string
     category: string
 }
 
@@ -52,9 +54,8 @@ function flatten<T extends Tree<T> & Identifiable>(templates?: T[]): Flattened<T
             [t.id ?? t.name]: {...t, children: t.children?.map(c => c.id ?? c.name)},
         }
         const flattened = flatten(t.children)
-        const fKeys = Object.keys(flattened)
         const rKeys = Object.keys(refMap)
-        const duplicateKeys = fKeys.filter(k => rKeys.includes(k))
+        const duplicateKeys = Object.keys(flattened).filter(k => rKeys.includes(k))
         if (duplicateKeys.length > 0) {
             throw new Error(`Duplicate ids/names found: ${duplicateKeys}`)
         }
@@ -120,11 +121,13 @@ export async function applyTemplate(template: Template) {
         }
         const items = await createFromIdentifiables(template.items, t => Item.create({
             name: t.name,
-            categoryId: createdCategories[t.category].id
+            categoryId: createdCategories[t.category].id,
+            description: t.description,
         }))
 
         const [flatLocations, createdLocations] = await createFromTrees(template.locations, t => Location.create({
             name: t.name,
+            description: t.description,
         }))
 
         const stockItems = await createFromList(template.stock, t => StockItem.create({

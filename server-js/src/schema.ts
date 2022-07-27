@@ -2,6 +2,8 @@ import {buildSchema} from "graphql";
 
 // language=GraphQL
 export default buildSchema(`
+    scalar Int
+    scalar String
     scalar JSON
     scalar DateTime
     scalar Boolean
@@ -36,6 +38,7 @@ export default buildSchema(`
     type Category {
         id: Int!
         name: String!
+        description: String
         parent: Category
         children: [Category!]!
         properties: [Property!]!
@@ -44,12 +47,14 @@ export default buildSchema(`
         createdAt: DateTime!
         updatedAt: DateTime!
         allItems: [Item!]!
-        allParents: [Category!]!
+        ancestors: [Category!]!
+        descendants: [Category!]!
     }
 
     type Location {
         id: Int!
         name: String!
+        description: String
         parent: Location
         children: [Location!]!
         auditLog: [AuditLog!]!
@@ -57,16 +62,19 @@ export default buildSchema(`
         updatedAt: DateTime!
         stock: [StockItem!]!
         allStockItems: [StockItem!]!
-        allParents: [Location!]!
+        ancestors: [Location!]!
+        descendants: [Location!]!
     }
 
     type Item {
         id: Int!
-        name: String
+        name: String!
+        description: String
         category: Category!
         propertyValues: [PropertyValue!]!
         allCategories: [Category!]!
         allProperties: [ItemProperty!]!
+        stock: [StockItem!]!
         auditLog: [AuditLog!]!
         createdAt: DateTime!
         updatedAt: DateTime!
@@ -78,7 +86,7 @@ export default buildSchema(`
         location: Location!
         item: Item!
     }
-    
+
     type AuditLog {
         id: Int!
         entity: String!
@@ -90,19 +98,19 @@ export default buildSchema(`
 
     type Query {
         category(id: Int!): Category
-        categories(id: Int, name: String): [Category!]!
+        categories(id: Int, name: String, parentId: Int, root: Boolean): [Category!]!
 
         item(id: Int!): Item
         items(id: Int, name: String, categoryId: Int): [Item!]!
 
         location(id: Int!): Location
-        locations(id: Int, name: String): [Location!]!
+        locations(id: Int, name: String, parentId: Int, root: Boolean): [Location!]!
 
         property(id: Int!): Property
         properties(id: Int, name: String): [Property!]!
 
         stockItems(locationId: Int, itemId: Int): [StockItem!]!
-        
+
         auditLog(entity: String, entityId: String): [AuditLog]!
     }
 

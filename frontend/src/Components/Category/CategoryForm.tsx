@@ -7,7 +7,7 @@ import {SearchSelect, SelectProps} from "../Form/SearchSelect";
 import {useApi} from "../../Api";
 
 const FIND_CATEGORY_BY_NAME = gql`query($name: String!) {
-    categories(name: $name) { id name allParents { id name } }
+    categories(name: $name) { id name ancestors { id name } }
 }`
 
 export function CategorySelect(props: SelectProps<Category>) {

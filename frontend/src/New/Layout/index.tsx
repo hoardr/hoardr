@@ -4,7 +4,8 @@ import {FolderIcon, HomeIcon, LocationMarkerIcon, MenuIcon, ViewGridIcon, XIcon}
 import {NavLink, Route, Routes} from 'react-router-dom'
 import {Categories} from '../Pages/Categories'
 import {classNames} from "../../Util/classNames";
-import {Breadcrumbs} from "../Components/Breadcrumbs";
+import {Breadcrumb, Breadcrumbs} from "../Components/Breadcrumbs";
+import {Items} from "../Pages/Items";
 
 const navigation = [
     {name: 'Home', href: '/', icon: HomeIcon},
@@ -21,19 +22,13 @@ const breadcrumbs = [
 ]
 
 export function PageContent({children, sidebar}: PropsWithChildren<{ sidebar?: ReactNode }>) {
-    return <main className={"flex-grow"}>
-        {/* Primary column */}
-        <section className="overflow-y-auto lg:order-last">
+    return <main className={"flex flex-grow gap-2 flex-col lg:flex-row px-0 md:px-2"}>
+        {sidebar ? <aside className="lg:w-128">
+            {sidebar}
+        </aside> : null}
+        <section className="overflow-y-auto flex-grow">
             {children}
         </section>
-
-        {/* Secondary column (hidden on smaller screens) */}
-        {sidebar ? <aside className="hidden lg:block lg:flex-shrink-0 lg:order-first">
-            <div
-                className="h-full relative flex flex-col w-96 border-r border-gray-200 bg-white overflow-y-auto">
-                {sidebar}
-            </div>
-        </aside> : null}
     </main>
 }
 
@@ -45,7 +40,7 @@ export function Navbar({navigation}: NavbarProps) {
     return <Disclosure as="nav" className="bg-blue-600 shadow-sm">
         {({open}) => (
             <>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
                             <div className="flex-shrink-0 flex items-center">
@@ -113,8 +108,9 @@ export function Navbar({navigation}: NavbarProps) {
         )}
     </Disclosure>
 }
+export type BuildBreadcrumbs = (breadcrumbs: Breadcrumb[]) => void
 
-export default function Layout({children}: PropsWithChildren<any>) {
+export default function Layout() {
     return (
         <>
             <header className={"bg-white shadow"}>
@@ -123,6 +119,7 @@ export default function Layout({children}: PropsWithChildren<any>) {
             </header>
             <Routes>
                 <Route path={"categories/*"} element={<Categories/>}/>
+                <Route path={"items/*"} element={<Items/>}/>
             </Routes>
         </>
     )

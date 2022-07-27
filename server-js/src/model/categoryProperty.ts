@@ -2,7 +2,7 @@ import {AllowNull, Column, ForeignKey, Model, Table} from "sequelize-typescript"
 import Category from "./category";
 import Property from "./property";
 import {MutationInput, Resolver} from "./index";
-import {transactional} from "./transactional";
+import {transactional} from "./utils";
 
 @Table
 export default class CategoryProperty extends Model {

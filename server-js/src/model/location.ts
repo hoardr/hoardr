@@ -2,13 +2,16 @@ import {DataTypes, Op} from "sequelize";
 import {AuditLog, MutationInput, Resolver} from "./index";
 import {AllowNull, BelongsTo, Column, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 import StockItem from "./stockItem";
-import {transactional} from "./transactional";
+import {ancestors, descendants, transactional} from "./utils";
 
 @Table
 export default class Location extends Model {
     @AllowNull(false)
     @Column
     declare name: string;
+
+    @Column
+    declare description: string;
 
     @ForeignKey(() => Location)
     @Column(DataTypes.INTEGER)
@@ -39,11 +42,13 @@ export default class Location extends Model {
         return await location.save()
     })
 
-    static query: Resolver<FindLocationsInput> = async (parent, {id, name}) => {
+    static query: Resolver<FindLocationsInput> = async (parent, {id, name, parentId, root}) => {
         return Location.findAll({
             where: {
                 ...id ? {id} : {},
-                ...name ? {[Op.substring]: name} : {}
+                ...name ? {[Op.substring]: name} : {},
+                ...parentId ? {parentId} : {},
+                ...root ? {parentId: null} : {}
             },
         })
     }
@@ -67,7 +72,9 @@ export default class Location extends Model {
             children: (parent: Location) => parent.$get('children'),
             parent: (parent: Location) => parent.$get('parent'),
             stock: (parent: Location) => parent.$get('stockItems'),
-            allStockItems: () => [] // TODO
+            allStockItems: () => [], // TODO
+            ancestors: ancestors,
+            descendants: descendants,
         },
         Mutation: {
             addLocation: Location.add,
@@ -92,7 +99,9 @@ export type DeleteLocationInput = MutationInput<{
 }>
 
 export type FindLocationsInput = {
-    id?: number,
+    id?: number
     name?: string
+    parentId?: number
+    root?: boolean
 }
 

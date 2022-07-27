@@ -5,7 +5,7 @@ import Property from "./property";
 import CategoryProperty from "./categoryProperty";
 import Item from "./item";
 import AuditLog from "./auditLog";
-import {transactional} from "./transactional";
+import {ancestors, descendants, transactional} from "./utils";
 
 @Table
 export default class Category extends Model {
@@ -38,11 +38,13 @@ export default class Category extends Model {
         })
     })
 
-    static query: Resolver<FindCategoriesInput> = async (parent, {id, name}) => {
+    static query: Resolver<FindCategoriesInput> = async (parent, {id, name, parentId, root}) => {
         return Category.findAll({
             where: {
                 ...id ? {id} : {},
-                ...name ? {[Op.substring]: name} : {}
+                ...name ? {[Op.substring]: name} : {},
+                ...parentId ? {parentId} : {},
+                ...root ? {parentId: null} : {}
             }
         })
     }
@@ -79,7 +81,9 @@ export default class Category extends Model {
             properties: (parent: Category) => parent.$get('properties'),
             parent: (parent: Category) => parent.$get('parent'),
             items: (parent: Category) => parent.$get('items'),
-            allItems: () => []
+            allItems: () => [],
+            ancestors: ancestors,
+            descendants: descendants,
         },
         Mutation: {
             addCategory: Category.add,
@@ -105,7 +109,9 @@ export type DeleteCategoryInput = MutationInput<{
 }>
 
 export type FindCategoriesInput = {
-    id?: number,
+    id?: number
     name?: string
+    parentId?: number
+    root?: boolean
 }
 

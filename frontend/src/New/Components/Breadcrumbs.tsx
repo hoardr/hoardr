@@ -1,9 +1,10 @@
 import {ArrowNarrowLeftIcon} from "@heroicons/react/solid";
 import {Link} from "react-router-dom";
 import {HomeIcon} from "@heroicons/react/outline";
+import {ReactNode} from "react";
 
 export type Breadcrumb = {
-    name: string,
+    name: ReactNode,
     href: string,
     current: boolean
 }
@@ -13,7 +14,7 @@ export type BreadcrumbsProps = {
 
 export function Breadcrumbs({items}: BreadcrumbsProps) {
     if (items.length < 2) return null;
-    return <div className="max-w-7xl mx-auto px-4 sm:px-6">
+    return <div className="px-4 sm:px-6">
         <div className="border-t border-gray-200 py-3">
             <nav className="flex" aria-label="Breadcrumbs">
                 <div className="flex sm:hidden">
@@ -38,7 +39,7 @@ export function Breadcrumbs({items}: BreadcrumbsProps) {
                                 </Link>
                             </div>
                         </li>
-                        {items.slice(1).map((item) => (<li key={item.name}>
+                        {items.slice(1).map((item) => (<li key={typeof item.name === 'string' ? item.name : item.href}>
                             <div className="flex items-center">
                                 <svg
                                     className="flex-shrink-0 h-5 w-5 text-gray-300"

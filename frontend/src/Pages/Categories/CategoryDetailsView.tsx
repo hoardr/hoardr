@@ -16,7 +16,7 @@ export const GET_CATEGORY = gql`query($id: Int!) {
         id
         name
         children { id name parent { id name } children { id name } items { id name } allItems { id name location { id name } category { id name } }  }
-        allParents { id name properties { id name type } }
+        ancestors { id name properties { id name type } }
         properties { id name type }
         events { id type data createdDate }
         allItems { id name category { id name } location { id name } }

@@ -3,9 +3,20 @@ import {Template} from "./index";
 const template: Template = {
     categories: [{
         name: "Electronics",
+        description: "All sorts of electronic devices and gadgets",
+        properties: ["Manufacturer"],
         children: [{
             name: "Cables",
+            description: "Cables that connect devices together",
             properties: ["Length"],
+        }, {
+            name: "Computers",
+            properties: ["Serial"],
+            children: [{
+                name: "Laptops",
+                description: "Portable computing devices",
+                properties: ["Screen diagonal"]
+            }]
         }]
     }],
     locations: [{
@@ -16,8 +27,10 @@ const template: Template = {
                 name: "Bedroom",
                 children: [{
                     name: "Bookshelf",
+                    description: "Brown bookshelf left of the door",
                     children: [{
                         name: "3rd shelf",
+                        description: "Third shelf from the bottom",
                         children: [{
                             name: "Bin 2"
                         }]
@@ -37,10 +50,29 @@ const template: Template = {
     properties: [{
         name: "Length",
         type: "NUMBER"
+    },{
+        name: "Screen diagonal",
+        type: "NUMBER"
+    }, {
+        name: "Serial",
+        type: "TEXT"
+    }, {
+        name: "Manufacturer",
+        type: "TEXT"
     }],
     items: [{
         name: "HDMI Cable",
         category: "Cables",
+    }, {
+        name: "Lenovo laptop",
+        category: "Laptops"
+    }, {
+        name: "Capacitor",
+        description: "Just a regular old capacitor",
+        category: "Electronics"
+    }, {
+        name: "Desktop computer",
+        category: "Computers"
     }],
     stock: [{
         item: "HDMI Cable",

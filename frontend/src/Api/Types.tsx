@@ -6,18 +6,24 @@ export type Category = {
     allItems: Item[]
     items: Item[]
     allParents: Category[]
+    ancestors: Category[]
+    descendants: Category[]
     properties: Property[]
     events: CategoryEvent[]
     parent: Category
+    auditLog: AuditLogEvent[]
 }
 
 export type Location = {
     id: number
     name: string
+    description?: string
     children: Location[]
     allItems: Item[]
     items: Item[]
     allParents: Location[]
+    ancestors: Location[]
+    descendants: Location[]
     events: LocationEvent[]
     parent: Location
 }
@@ -50,7 +56,7 @@ export type CategoryEvent = {
     id: number
     type: string
     data: { [key: string]: string }
-    createdDate: string
+    createdAt: string
 }
 
 export type PropertyValue = {
@@ -65,12 +71,30 @@ export type ItemProperty = {
     category: Category
 }
 
+export type StockItem = {
+    quantity: number
+    item: Item
+    location: Location
+}
+
 export type Item = {
+    stock: StockItem[];
     id: number
+    description?: string
     name: string
     category: Category
     allProperties: ItemProperty[]
     propertyValues: PropertyValue[]
     events: ItemEvent[]
+    auditLog: AuditLogEvent[]
+}
+
+export type AuditLogEvent = {
+    id: number
+    entity: string
+    entityId: number
+    action: string
+    data: any
+    createdAt: string
 }
 

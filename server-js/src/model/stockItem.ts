@@ -2,7 +2,7 @@ import {MutationInput, Resolver} from "./index";
 import {AllowNull, BelongsTo, Column, ForeignKey, Model, Table} from "sequelize-typescript";
 import Item from "./item";
 import Location from "./location";
-import {transactional} from "./transactional";
+import {transactional} from "./utils";
 
 @Table
 export default class StockItem extends Model {

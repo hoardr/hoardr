@@ -1,9 +1,9 @@
 import {MutationInput, Resolver} from "./index";
-import {AllowNull, BelongsToMany, Column, Model, Table} from "sequelize-typescript";
+import {AllowNull, BelongsToMany, Column, ForeignKey, Model, Table} from "sequelize-typescript";
 import CategoryProperty from "./categoryProperty";
 import Category from "./category";
 import {Op} from "sequelize";
-import {transactional} from "./transactional";
+import {transactional} from "./utils";
 
 @Table
 export default class Property extends Model {

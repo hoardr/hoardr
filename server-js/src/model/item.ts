@@ -5,13 +5,16 @@ import StockItem from "./stockItem";
 import Category from "./category";
 import PropertyValue from "./propertyValue";
 import AuditLog from "./auditLog";
-import {transactional} from "./transactional";
+import {transactional} from "./utils";
 
 @Table
 export default class Item extends Model {
     @AllowNull(false)
     @Column
     declare name: string;
+
+    @Column
+    declare description: string;
 
     @ForeignKey(() => Category)
     @AllowNull(false)
@@ -88,6 +91,7 @@ export default class Item extends Model {
         Item: {
             category: (parent: Item) => parent.$get('category'),
             propertyValues: (parent: Item) => parent.$get('propertyValues'),
+            stock: (parent: Item) => parent.$get('stockItems'),
             auditLog: (parent: Item) => AuditLog.findByEntity(parent),
         },
         Mutation: {
@@ -109,6 +113,6 @@ export type AddItemInput = MutationInput<{
 }>
 
 export type FindItemsInput = {
-    id?: number,
+    id?: number
     name?: string
 }

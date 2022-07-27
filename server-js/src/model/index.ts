@@ -1,4 +1,4 @@
-import {Sequelize} from "sequelize-typescript";
+import {Model, Sequelize} from "sequelize-typescript";
 import Category from "./category";
 import Property from "./property";
 import Item from "./item";
