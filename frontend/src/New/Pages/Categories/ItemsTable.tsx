@@ -1,5 +1,5 @@
 import {Columns, Table} from "../../Components/Table";
-import {Item} from "../../../Api/Types";
+import {Item, Unit} from "../../../Api/Types";
 import {Link} from "react-router-dom";
 import {ancestorPath} from "../../util";
 import {IconText} from "../../Components/IconText";
@@ -7,6 +7,10 @@ import {FolderIcon, ShoppingCartIcon, ViewGridIcon} from "@heroicons/react/outli
 
 function sum(arr: number[]): number {
     return arr.reduce((a, b) => a + b, 0)
+}
+
+function quantity(quantity: number, unit: Unit, locations: number) {
+    return `${quantity} ${quantity === 1 ? unit.singular : unit.plural} in ${locations} ${locations === 1 ? 'location' : 'locations'}`
 }
 
 const columns: Columns<Item> = [
@@ -30,7 +34,7 @@ const columns: Columns<Item> = [
         key: "stock",
         title: <IconText icon={ShoppingCartIcon}>Stock</IconText>,
         render: (item) => {
-            return `${sum(item.stock.map(s => s.quantity))} total in ${item.stock.length} locations`;
+            return quantity(sum(item.stock.map(s => s.quantity)), item.unit, item.stock.length)
         }
     },
     {

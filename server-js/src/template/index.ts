@@ -1,4 +1,4 @@
-import {Category, CategoryProperty, Item, Location, Property, sequelize, StockItem} from "../storage/model";
+import {Category, CategoryProperty, Item, Location, Property, sequelize, StockItem, Unit} from "../storage/model";
 import {Model} from "sequelize-typescript";
 
 export type PropertyTemplate = {
@@ -24,6 +24,7 @@ export type ItemTemplate = {
     name: string
     description?: string
     category: string
+    unit: string
 }
 
 export type CategoryTemplate = {
@@ -34,12 +35,19 @@ export type CategoryTemplate = {
     properties?: string[]
 }
 
+export type UnitTemplate = {
+    id?: string
+    name: string
+    plural: string
+}
+
 export type Template = {
     categories?: CategoryTemplate[]
     properties?: PropertyTemplate[]
     locations?: LocationTemplate[]
     items?: ItemTemplate[]
     stock?: StockItemTemplate[]
+    units?: UnitTemplate[]
 }
 type Identifiable = {id?: string, name: string}
 type Tree<T extends Tree<T>> = { children?: T[] };
@@ -119,10 +127,15 @@ export async function applyTemplate(template: Template) {
                 })
             }
         }
+        const units = await createFromIdentifiables(template.units, async t => (await Unit.findOrCreate({
+            where: {singular: t.name, plural: t.plural},
+        }))[0])
+
         const items = await createFromIdentifiables(template.items, t => Item.create({
             name: t.name,
             categoryId: createdCategories[t.category].id,
             description: t.description,
+            unitId: units[t.unit].id
         }))
 
         const [flatLocations, createdLocations] = await createFromTrees(template.locations, t => Location.create({

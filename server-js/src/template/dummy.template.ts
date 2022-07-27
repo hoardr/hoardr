@@ -63,16 +63,20 @@ const template: Template = {
     items: [{
         name: "HDMI Cable",
         category: "Cables",
+        unit: "item"
     }, {
         name: "Lenovo laptop",
-        category: "Laptops"
+        category: "Laptops",
+        unit: "item"
     }, {
         name: "Capacitor",
         description: "Just a regular old capacitor",
-        category: "Electronics"
+        category: "Electronics",
+        unit: "item"
     }, {
         name: "Desktop computer",
-        category: "Computers"
+        category: "Computers",
+        unit: "item"
     }],
     stock: [{
         item: "HDMI Cable",
@@ -82,6 +86,10 @@ const template: Template = {
         item: "HDMI Cable",
         location: "3rd shelf",
         quantity: 1
+    }],
+    units: [{
+        name: "item",
+        plural: "items"
     }]
 }
 

@@ -36,12 +36,12 @@ export function Table<T, G = any>({keyIndex, columns, data}: TableProps<T, G>) {
             ))}
         </tr>
         </thead>
-        <tbody className="divide-y divide-gray-200 bg-white">
+        <tbody className="divide-y divide-gray-200 bg-white text-gray-700">
         {data.map((row) => {
             if (row.tableRecordType === 'group') {
                 rowIdx = 0;
-                return <tr key={row.name}>
-                    <td colSpan={columns.length} className={"whitespace-nowrap px-3 py-2 text-sm font-bold bg-gray-200"}>{row.render()}</td>
+                return <tr key={row.name} className={"shadow-md"}>
+                    <td colSpan={columns.length} className={"whitespace-nowrap px-3 py-2 text-sm font-bold bg-gray-100"}>{row.render()}</td>
                 </tr>
             }
             return (

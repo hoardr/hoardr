@@ -99,12 +99,11 @@ export class CategoryApi {
     private static selection(s: string) {
         return gql`
             fragment innerSelection on Category {
-                id name description items { id name stock { id quantity location { id name }}} properties { id name type } ancestors { name description }
+                id name description items { id name unit {singular plural} stock { id quantity location { id name }}} properties { id name type } ancestors { name description }
             }
             fragment selection on Category {
                 ...innerSelection
                 children { id name description items {id name} }
-                #items { id name category { id name ancestors { name } } stock { id quantity location { id name }} }
                 auditLog { id createdAt action entity entityId data}
                 ancestors { ...innerSelection }
                 descendants { ...innerSelection }
@@ -175,7 +174,8 @@ export class ItemApi {
             name
             description
             category { id name description ancestors { name } }
-            auditLog { id createdAt action entity entityId data}
+            auditLog { id createdAt action entity entityId data }
+            unit { singular plural }
             stock { quantity location { id name description ancestors { name } }}
         }
         ${s}`

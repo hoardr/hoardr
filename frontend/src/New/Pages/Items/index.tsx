@@ -86,7 +86,7 @@ function DetailView() {
                         {/* TODO */}
                         {/*<Route path={"items"} element={<ItemsTable items={collectFromAncestors(item, 'items', 'category')}/>}/>*/}
                         <Route path={"log"} element={<AuditLogTable events={item.auditLog}/>}/>
-                        <Route index element={<StockTable stockItems={item.stock}/>}/>
+                        <Route index element={<StockTable stockItems={item.stock} unit={item.unit}/>}/>
                     </Routes>
                 </div>
             </Card>

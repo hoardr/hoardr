@@ -78,7 +78,6 @@ export type StockItem = {
 }
 
 export type Item = {
-    stock: StockItem[];
     id: number
     description?: string
     name: string
@@ -87,6 +86,14 @@ export type Item = {
     propertyValues: PropertyValue[]
     events: ItemEvent[]
     auditLog: AuditLogEvent[]
+    stock: StockItem[]
+    unit: Unit
+}
+
+export type Unit = {
+    id: number
+    singular: string
+    plural: string
 }
 
 export type AuditLogEvent = {

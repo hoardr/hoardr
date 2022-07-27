@@ -11,6 +11,7 @@ import {IFieldResolver} from "@graphql-tools/utils/typings/Interfaces";
 import PropertyValue from "./propertyValue";
 import cls from 'cls-hooked';
 import AuditLog from "./auditLog";
+import Unit from "./unit";
 
 export const namespace = cls.createNamespace('hoardr');
 Sequelize.useCLS(namespace);
@@ -18,9 +19,10 @@ Sequelize.useCLS(namespace);
 export const sequelize = new Sequelize({
     dialect: 'sqlite',
     storage: 'data.db',
-    logQueryParameters: true
+    logging: process.env.DEBUG === 'true',
+    logQueryParameters: process.env.DEBUG === 'true'
 });
-const models = [Category, Property, Item, Location, StockItem, CategoryProperty, PropertyValue, AuditLog,];
+const models = [Category, Property, Item, Location, StockItem, CategoryProperty, PropertyValue, AuditLog, Unit,];
 sequelize.addModels(models)
 
 models.forEach(m => {
@@ -36,7 +38,7 @@ export type MutationInput<T> = { input: T }
 export type Resolver<T> = IFieldResolver<any, any, T>
 
 export {
-    Category, Property, Item, Location, StockItem, CategoryProperty, PropertyValue, AuditLog
+    Category, Property, Item, Location, StockItem, CategoryProperty, PropertyValue, AuditLog, Unit,
 };
 
 // @ts-ignore

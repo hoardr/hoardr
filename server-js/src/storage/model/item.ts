@@ -6,6 +6,7 @@ import Category from "./category";
 import PropertyValue from "./propertyValue";
 import AuditLog from "./auditLog";
 import {transactional} from "../utils";
+import Unit from "./unit";
 
 @Table
 export default class Item extends Model {
@@ -15,6 +16,14 @@ export default class Item extends Model {
 
     @Column
     declare description: string;
+
+    @ForeignKey(() => Unit)
+    @AllowNull(false)
+    @Column
+    declare unitId: number;
+
+    @BelongsTo(() => Unit)
+    declare unit: Unit;
 
     @ForeignKey(() => Category)
     @AllowNull(false)
@@ -30,8 +39,8 @@ export default class Item extends Model {
     @HasMany(() => PropertyValue)
     declare propertyValues: PropertyValue[]
 
-    static add: Resolver<AddItemInput> = transactional(async (parent, {input: {name, categoryId}}) => {
-        return await Item.create({name, categoryId})
+    static add: Resolver<AddItemInput> = transactional(async (parent, {input: {name, categoryId, unitId}}) => {
+        return await Item.create({name, categoryId, unitId})
     })
 
     static query: Resolver<FindItemsInput> = (parent, {id, name}) => {
@@ -92,6 +101,7 @@ export default class Item extends Model {
             category: (parent: Item) => parent.$get('category'),
             propertyValues: (parent: Item) => parent.$get('propertyValues'),
             stock: (parent: Item) => parent.$get('stockItems'),
+            unit: (parent: Item) => parent.$get('unit'),
             auditLog: (parent: Item) => AuditLog.findByEntity(parent),
         },
         Mutation: {
@@ -110,6 +120,7 @@ export type SetPropertyValueInput = MutationInput<{
 export type AddItemInput = MutationInput<{
     name: string,
     categoryId: number
+    unitId: number
 }>
 
 export type FindItemsInput = {

@@ -56,8 +56,8 @@ export default class StockItem extends Model {
 }
 
 export type AddStockItemInput = MutationInput<{
-    itemId: number,
-    locationId: number,
+    itemId: number
+    locationId: number
     quantity: number
 }>
 

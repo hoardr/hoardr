@@ -70,6 +70,7 @@ export default buildSchema(`
         id: Int!
         name: String!
         description: String
+        unit: Unit!
         category: Category!
         propertyValues: [PropertyValue!]!
         allCategories: [Category!]!
@@ -85,6 +86,12 @@ export default buildSchema(`
         quantity: Int!
         location: Location!
         item: Item!
+    }
+    
+    type Unit {
+        id: Int!
+        singular: String!
+        plural: String!
     }
 
     type AuditLog {
@@ -138,6 +145,7 @@ export default buildSchema(`
     input AddItemInput {
         name: String!
         categoryId: Int!
+        unitId: Int!
     }
 
     input SetPropertyValueInput {
@@ -170,8 +178,8 @@ export default buildSchema(`
     }
 
     input AddStockItemInput {
-        itemId: Int!,
-        locationId: Int!,
+        itemId: Int!
+        locationId: Int!
         quantity: Int!
     }
 
