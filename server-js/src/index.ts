@@ -7,6 +7,15 @@ import {ApolloServerPluginDrainHttpServer} from "apollo-server-core";
 import {IExecutableSchemaDefinition} from "@graphql-tools/schema";
 import {applyTemplate} from "./template";
 import dummyTemplate from "./template/dummy.template";
+import {ItemDataSource, UnitDataSource} from "./datasource/dataloader";
+
+const dataSources = () => ({
+    item: new ItemDataSource(),
+    unit: new UnitDataSource(),
+})
+
+export type DataSources = ReturnType<typeof dataSources>
+export type Context = { dataSources: DataSources }
 
 async function startServer(typeDefs: IExecutableSchemaDefinition['typeDefs'], resolvers: IExecutableSchemaDefinition['resolvers']) {
     console.log("Syncing migrations")
@@ -20,6 +29,7 @@ async function startServer(typeDefs: IExecutableSchemaDefinition['typeDefs'], re
         csrfPrevention: true,
         cache: 'bounded',
         plugins: [ApolloServerPluginDrainHttpServer({httpServer})],
+        dataSources
     });
     await server.start();
     server.applyMiddleware({
@@ -35,5 +45,5 @@ async function startServer(typeDefs: IExecutableSchemaDefinition['typeDefs'], re
     console.log(`Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 
-startServer(schema, resolvers)
+startServer(schema, resolvers).then(() => {})
 

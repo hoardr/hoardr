@@ -33,7 +33,7 @@ export default class Property extends Model {
         return Property.findAll({
             where: {
                 ...id ? {id} : {},
-                ...name ? {[Op.substring]: name} : {}
+                ...name ? {name: {[Op.substring]: name}} : {}
             },
         })
     }

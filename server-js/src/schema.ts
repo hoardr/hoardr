@@ -119,6 +119,8 @@ export default buildSchema(`
         stockItems(locationId: Int, itemId: Int): [StockItem!]!
 
         auditLog(entity: String, entityId: String): [AuditLog]!
+
+        units: [Unit]!
     }
 
     input AddLocationInput {
@@ -128,6 +130,7 @@ export default buildSchema(`
 
     input AddCategoryInput {
         name: String!
+        description: String
         parentId: Int
     }
 
@@ -144,6 +147,7 @@ export default buildSchema(`
 
     input AddItemInput {
         name: String!
+        description: String
         categoryId: Int!
         unitId: Int!
     }

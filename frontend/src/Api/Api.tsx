@@ -148,8 +148,8 @@ export class CategoryApi {
         await this.client.request(CategoryApi.SET_PARENT, {input: {categoryId, parentId}})
     }
 
-    public async add(name: string, parentId?: number) {
-        await this.client.request(CategoryApi.ADD, {input: {name, parentId}})
+    public async add(name: string, description?: string, parentId?: number) {
+        await this.client.request(CategoryApi.ADD, {input: {name, parentId, description}})
     }
 }
 
@@ -202,8 +202,8 @@ export class ItemApi {
         return (await this.client.request<{ item: Item }>(ItemApi.GET_BY_ID, {id})).item
     }
 
-    public async add(name: string, categoryId: number, locationId: number, quantity: number = 1) {
-        await this.client.request(ItemApi.ADD, {input: {name, categoryId, locationId, quantity}})
+    public async add(name: string, description: string, categoryId: number, unitId: number) {
+        await this.client.request(ItemApi.ADD, {input: {name, description, categoryId, unitId}})
     }
 
     public async setPropertyValue(itemId: number, propertyId: number, value: string | null) {

@@ -4,14 +4,16 @@ import {useApi} from "../../../Api";
 import {Item} from "../../../Api/Types";
 import {PageContent} from "../../Layout";
 import {Button} from "../../Components/Button";
-import {LinkIcon, PencilIcon, PlusIcon} from "@heroicons/react/solid";
+import {PlusIcon} from "@heroicons/react/solid";
 import {Card} from "../../Components/Card";
 import {Tab, Tabs} from "../../Components/Tabs";
 import {ShoppingCartIcon, ViewListIcon} from "@heroicons/react/outline";
 import {ItemsTable} from "../Categories/ItemsTable";
 import {AuditLogTable} from "../Categories/AuditLog";
-import {PageHeading} from "../../Components/pageHeading";
+import {PageHeading} from "../../Components/PageHeading";
 import {StockTable} from "./StockTable";
+import {NewItemForm} from "../../Components/NewItemForm";
+import {FormButton} from "../../Components/FormButton";
 
 
 export function Items() {
@@ -43,9 +45,9 @@ function IndexView() {
 
 function HeadingButtons() {
     return <div className="mt-5 flex lg:mt-0 lg:ml-4">
-        <Button icon={PencilIcon}>Edit</Button>
-        <Button icon={LinkIcon} className={"ml-1 sm:ml-3"}>View</Button>
-        <Button icon={PlusIcon} className={"ml-1 sm:ml-3"} type={'primary'}>New item</Button>
+        <FormButton title={"New item"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new item"}>
+            {({formRef}) => <NewItemForm formRef={formRef}/>}
+        </FormButton>
     </div>;
 }
 
@@ -72,7 +74,7 @@ function DetailView() {
         name: "Stock",
         icon: ShoppingCartIcon,
         href: `/items/${item.id}`,
-        aside: <Button type={"primary"} icon={PlusIcon}>New subcategory</Button>
+        aside: <Button type={"success"} icon={PlusIcon}>New subcategory</Button>
     }, {
         name: "Log",
         icon: ViewListIcon,
@@ -81,14 +83,12 @@ function DetailView() {
     return <PageContent sidebar={<ItemCard item={item}/>}>
         <article className="py-2 h-full max-h-full">
             <Card header={<Tabs tabs={tabs} className={"-mx-4 my-0 md:-my-4"}/>} noDivider>
-                <div className={"-mx-6 -my-6"}>
+                <section className={"-mx-6 -my-6"}>
                     <Routes>
-                        {/* TODO */}
-                        {/*<Route path={"items"} element={<ItemsTable items={collectFromAncestors(item, 'items', 'category')}/>}/>*/}
                         <Route path={"log"} element={<AuditLogTable events={item.auditLog}/>}/>
                         <Route index element={<StockTable stockItems={item.stock} unit={item.unit}/>}/>
                     </Routes>
-                </div>
+                </section>
             </Card>
         </article>
     </PageContent>

@@ -46,7 +46,7 @@ export default class Location extends Model {
         return Location.findAll({
             where: {
                 ...id ? {id} : {},
-                ...name ? {[Op.substring]: name} : {},
+                ...name ? {name: {[Op.substring]: name}} : {},
                 ...parentId ? {parentId} : {},
                 ...root ? {parentId: null} : {}
             },

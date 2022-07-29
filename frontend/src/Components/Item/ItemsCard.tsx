@@ -45,11 +45,11 @@ export function ItemsCard({items, onUpdate, initialValues}: ItemsCardProps) {
                          <ItemForm form={form}
                                    initialValues={initialValues}
                                    onFinish={values => {
-                                       api.item.add(values.name, +values.category, +values.location, +values.quantity).then(() => {
-                                           onUpdate()
-                                           message.success(`Added item ${values.name}`)
-                                           closeModal()
-                                       })
+                                       // api.item.add(values.name, +values.category, +values.location, +values.quantity).then(() => {
+                                       //     onUpdate()
+                                       //     message.success(`Added item ${values.name}`)
+                                       //     closeModal()
+                                       // })
                                    }}/>}
                  </ModalFormButton>}>
         <ConfigProvider renderEmpty={() => <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"No items"}/>}>

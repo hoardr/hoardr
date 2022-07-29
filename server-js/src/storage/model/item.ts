@@ -7,6 +7,7 @@ import PropertyValue from "./propertyValue";
 import AuditLog from "./auditLog";
 import {transactional} from "../utils";
 import Unit from "./unit";
+import {Context} from "../../index";
 
 @Table
 export default class Item extends Model {
@@ -39,15 +40,25 @@ export default class Item extends Model {
     @HasMany(() => PropertyValue)
     declare propertyValues: PropertyValue[]
 
-    static add: Resolver<AddItemInput> = transactional(async (parent, {input: {name, categoryId, unitId}}) => {
-        return await Item.create({name, categoryId, unitId})
+    static add: Resolver<AddItemInput> = transactional(async (parent, {
+        input: {
+            name,
+            description,
+            categoryId,
+            unitId
+        }
+    }) => {
+        return await Item.create({name, description, categoryId, unitId})
     })
 
-    static query: Resolver<FindItemsInput> = (parent, {id, name}) => {
+    static query: Resolver<FindItemsInput> = (parent, {id, name}, {dataSources}) => {
+        if (id !== undefined) {
+            return dataSources.item.get(id)
+        }
         return Item.findAll({
             where: {
                 ...id ? {id} : {},
-                ...name ? {[Op.substring]: name} : {}
+                ...name ? {name: {[Op.substring]: name}} : {}
             }
         })
     }
@@ -101,7 +112,7 @@ export default class Item extends Model {
             category: (parent: Item) => parent.$get('category'),
             propertyValues: (parent: Item) => parent.$get('propertyValues'),
             stock: (parent: Item) => parent.$get('stockItems'),
-            unit: (parent: Item) => parent.$get('unit'),
+            unit: (parent: Item, _: any, {dataSources}: Context) => dataSources.unit.get(parent.unitId),
             auditLog: (parent: Item) => AuditLog.findByEntity(parent),
         },
         Mutation: {
@@ -118,7 +129,8 @@ export type SetPropertyValueInput = MutationInput<{
 }>
 
 export type AddItemInput = MutationInput<{
-    name: string,
+    name: string
+    description: string
     categoryId: number
     unitId: number
 }>
@@ -127,3 +139,4 @@ export type FindItemsInput = {
     id?: number
     name?: string
 }
+

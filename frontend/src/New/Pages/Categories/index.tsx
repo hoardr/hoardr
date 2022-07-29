@@ -1,8 +1,8 @@
 import {FolderIcon, ViewGridIcon, ViewListIcon} from '@heroicons/react/outline';
-import {LinkIcon, PencilIcon, PlusIcon} from "@heroicons/react/solid";
-import {Routes, Route, useParams} from "react-router-dom";
+import {PlusIcon} from "@heroicons/react/solid";
+import {Route, Routes, useParams} from "react-router-dom";
 import {Category, Property} from "../../../Api/Types";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Tab, Tabs} from "../../Components/Tabs";
 import {Card} from "../../Components/Card";
 import {Button} from "../../Components/Button";
@@ -13,7 +13,10 @@ import {ItemsTable} from "./ItemsTable";
 import {AuditLogTable} from "./AuditLog";
 import {PropertiesTable} from "./PropertiesTable";
 import {collectFromAncestors, collectFromDescendants} from "../../util";
-import {PageHeading} from "../../Components/pageHeading";
+import {PageHeading} from "../../Components/PageHeading";
+import {NewCategoryForm} from "../../Components/NewCategoryForm";
+import {FormButton} from "../../Components/FormButton";
+import {NewItemForm} from "../../Components/NewItemForm";
 
 export function Categories() {
     return <Routes>
@@ -43,9 +46,9 @@ function IndexView() {
 
 function HeadingButtons() {
     return <div className="mt-5 flex lg:mt-0 lg:ml-4">
-        <Button icon={PencilIcon}>Edit</Button>
-        <Button icon={LinkIcon} className={"ml-1 sm:ml-3"}>View</Button>
-        <Button icon={PlusIcon} className={"ml-1 sm:ml-3"} type={'primary'}>New subcategory</Button>
+        <FormButton title={"New category"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new category"}>
+            {({formRef}) => <NewCategoryForm formRef={formRef}/>}
+        </FormButton>
     </div>;
 }
 
@@ -54,7 +57,7 @@ function CategoryCard({category}: { category: Category }) {
     return <article className={"py-2 h-full max-h-full text-sm font-normal"}>
         <Card header={<Card.Title title={category.name} subTitle={category.description}/>}>
             <div className={"-mx-6 -my-6"}>
-                <PropertiesTable properties={properties} />
+                <PropertiesTable properties={properties}/>
             </div>
         </Card>
     </article>
@@ -72,13 +75,17 @@ function DetailView() {
         name: "Subcategories",
         icon: FolderIcon,
         href: `/categories/${category.id}`,
-        aside: <Button type={"primary"} icon={PlusIcon}>New subcategory</Button>
+        aside: <FormButton title={"New subcategory"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new category"}>
+            {({formRef}) => <NewCategoryForm defaultParentId={category.id} formRef={formRef}/>}
+        </FormButton>
     }, {
         name: "Items",
         icon: ViewGridIcon,
         href: `/categories/${category.id}/items`,
-        aside: <Button type={"primary"} icon={PlusIcon}>New item</Button>
-    },{
+        aside: <FormButton title={"New item"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new item"}>
+            {({formRef}) => <NewItemForm formRef={formRef} defaultCategoryId={category.id}/>}
+        </FormButton>
+    }, {
         name: "Log",
         icon: ViewListIcon,
         href: `/categories/${category.id}/log`,
@@ -86,14 +93,14 @@ function DetailView() {
     return <PageContent sidebar={<CategoryCard category={category}/>}>
         <article className="py-2 h-full max-h-full">
             <Card header={<Tabs tabs={tabs} className={"-mx-4 my-0 md:-my-4"}/>} noDivider>
-                <div className={"-mx-6 -my-6"}>
+                <section className={"-mx-6 -my-6"}>
                     <Routes>
-                        {/* TODO */}
-                        <Route path={"items"} element={<ItemsTable items={collectFromDescendants(category, 'items', 'category')}/>}/>
+                        <Route path={"items"}
+                               element={<ItemsTable items={collectFromDescendants(category, 'items', 'category')}/>}/>
                         <Route path={"log"} element={<AuditLogTable events={category.auditLog}/>}/>
                         <Route index element={<CategoriesTable categories={category.children}/>}/>
                     </Routes>
-                </div>
+                </section>
             </Card>
         </article>
     </PageContent>

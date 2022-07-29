@@ -32,9 +32,9 @@ export default class Category extends Model {
     @HasMany(() => Item)
     declare items: Item[];
 
-    static add: Resolver<AddCategoryInput> = transactional(async (parent, {input: {name, parentId}}) => {
+    static add: Resolver<AddCategoryInput> = transactional(async (parent, {input: {name, parentId, description}}) => {
         return await Category.create({
-            name, parentId,
+            name, description, parentId,
         })
     })
 
@@ -42,7 +42,7 @@ export default class Category extends Model {
         return Category.findAll({
             where: {
                 ...id ? {id} : {},
-                ...name ? {[Op.substring]: name} : {},
+                ...name ? {name: {[Op.substring]: name}} : {},
                 ...parentId ? {parentId} : {},
                 ...root ? {parentId: null} : {}
             }
@@ -95,7 +95,8 @@ export default class Category extends Model {
 
 
 export type AddCategoryInput = MutationInput<{
-    name: string,
+    name: string
+    description?: string
     parentId?: number
 }>
 

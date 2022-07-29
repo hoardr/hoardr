@@ -20,7 +20,7 @@ export function CategoriesCard({categories, onUpdate}: CategoriesCardProps) {
                      {(form, openModal, closeModal) =>
                          <CategoryForm form={form}
                                        onFinish={values => {
-                                           api.category.add(values.name, values.parent ? +values.parent : undefined).then(() => {
+                                           api.category.add(values.name, "", values.parent ? +values.parent : undefined).then(() => {
                                                onUpdate()
                                                message.success(`Added category ${values.name}`)
                                                closeModal()
@@ -48,7 +48,7 @@ export function ChildCategoriesCard({categories, onUpdate, parent}: ChildCategor
                          <CategoryForm form={form}
                                        initialValues={{parent}}
                                        onFinish={values => {
-                                           api.category.add(values.name, values.parent ? +values.parent : undefined).then(() => {
+                                           api.category.add(values.name, "", values.parent ? +values.parent : undefined).then(() => {
                                                onUpdate()
                                                message.success(`Added child category ${values.name}`)
                                                closeModal()
