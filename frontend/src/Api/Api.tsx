@@ -98,7 +98,7 @@ export class LocationApi {
         await this.client.request(LocationApi.SET_PARENT, {input: {locationId, parentId}})
     }
 
-    public async add(name: string, parentId?: number) {
+    public async add(name: string, description?: string, parentId?: number) {
         await this.client.request(LocationApi.ADD, {input: {name, parentId}})
     }
 }

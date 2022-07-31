@@ -6,13 +6,12 @@ import {buildBreadcrumbs, buildBreadcrumbsFromAncestors, PageContent} from "../.
 import {PageHeading} from "../../Components/PageHeading";
 import {FormButton} from "../../Components/FormButton";
 import {PlusIcon} from "@heroicons/react/solid";
-import {NewItemForm} from "../../Components/NewItemForm";
 import {Card} from "../../Components/Card";
 import {Tab, Tabs} from "../../Components/Tabs";
 import {LocationMarkerIcon, ShoppingCartIcon, ViewListIcon} from "@heroicons/react/outline";
-import {Button} from "../../Components/Button";
 import {AuditLogTable} from "../Categories/AuditLog";
 import {LocationsTable} from "./LocationsTable";
+import {NewLocationForm} from "../../Components/NewLocationForm";
 
 export function Locations() {
     return <Routes>
@@ -27,7 +26,7 @@ function IndexView() {
     const [locations, setLocations] = useState<Location[]>()
     useEffect(() => {
         api.location.getRoot().then(setLocations)
-    }, [setLocations, api.item])
+    }, [setLocations, api.location])
     if (!locations) return null;
     return <PageContent breadcrumbs={buildBreadcrumbs({name: "Locations", href: "/locations"})}>
         <article className="py-2 px-1 md:px-4 h-full max-h-full">
@@ -43,8 +42,8 @@ function IndexView() {
 
 function HeadingButtons() {
     return <div className="mt-5 flex lg:mt-0 lg:ml-4">
-        <FormButton title={"New item"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new item"}>
-            {({formRef}) => <NewItemForm formRef={formRef}/>}
+        <FormButton title={"New location"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new location"}>
+            {({formRef}) => <NewLocationForm formRef={formRef}/>}
         </FormButton>
     </div>;
 }
@@ -66,13 +65,15 @@ function DetailView() {
     const [location, setLocation] = useState<Location>()
     useEffect(() => {
         api.location.get(Number(id)).then(setLocation)
-    }, [id, setLocation, api.item])
+    }, [id, setLocation, api.location])
     if (!location) return null;
     const tabs: Tab[] = [{
         name: "Sublocations",
         icon: LocationMarkerIcon,
         href: `/locations/${location.id}`,
-        aside: <Button type={"success"} icon={PlusIcon}>New location</Button>
+        aside: <FormButton title={"New location"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new location"}>
+            {({formRef}) => <NewLocationForm formRef={formRef}/>}
+        </FormButton>,
     }, {
         name: "Stock",
         icon: ShoppingCartIcon,

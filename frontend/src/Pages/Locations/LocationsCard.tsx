@@ -20,7 +20,7 @@ export function LocationsCard({locations, onUpdate}: LocationsCardProps) {
         {(form, openModal, closeModal) =>
             <LocationForm form={form}
                           onFinish={values => {
-                              api.location.add(values.name, values.parent ? +values.parent : undefined).then(() => {
+                              api.location.add(values.name, "", values.parent ? +values.parent : undefined).then(() => {
                                   onUpdate()
                                   message.success(`Added location ${values.name}`)
                                   closeModal()
@@ -50,7 +50,7 @@ export function ChildLocationsCard({children, onUpdate, parent}: ChildLocationsC
                          <LocationForm form={form}
                                        initialValues={{parent}}
                                        onFinish={values => {
-                                           api.location.add(values.name, values.parent ? +values.parent : undefined).then(() => {
+                                           api.location.add(values.name, "", values.parent ? +values.parent : undefined).then(() => {
                                                onUpdate()
                                                message.success(`Added child location ${values.name}`)
                                                closeModal()
