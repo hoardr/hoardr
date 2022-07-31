@@ -12,6 +12,8 @@ import {LocationMarkerIcon, ShoppingCartIcon, ViewListIcon} from "@heroicons/rea
 import {AuditLogTable} from "../Categories/AuditLog";
 import {LocationsTable} from "./LocationsTable";
 import {NewLocationForm} from "../../Components/NewLocationForm";
+import {StockTable} from "../Items/StockTable";
+import {collectFromDescendants} from "../../util";
 
 export function Locations() {
     return <Routes>
@@ -90,7 +92,7 @@ function DetailView() {
                 <section className={"-mx-6 -my-6"}>
                     <Routes>
                         <Route path={"log"} element={<AuditLogTable events={location.auditLog}/>}/>
-                        <Route path={"stock"} element={<AuditLogTable events={location.auditLog}/>}/>
+                        <Route path={"stock"} element={<StockTable stockItems={collectFromDescendants(location, 'stock', 'location')} columns={['item', 'location']}/>}/>
                         <Route index element={<LocationsTable locations={location.children}/>}/>
                     </Routes>
                 </section>

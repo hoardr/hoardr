@@ -42,7 +42,7 @@ export class LocationApi {
     private static selection(s: string) {
         return gql`
             fragment innerSelection on Location {
-                id name description stock { id quantity } ancestors { id name description }
+                id description name stock { id quantity item { id description name unit { id singular plural } } } ancestors { id name description }
             }
             fragment selection on Location {
                 ...innerSelection
@@ -50,7 +50,9 @@ export class LocationApi {
                 name
                 description
                 children { id name description stock { id quantity } }
-                stock { id quantity item { id name } }
+                descendants {
+                    ...innerSelection
+                }
                 parent { id name }
                 auditLog { id action data createdAt }
             }
