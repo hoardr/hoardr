@@ -6,6 +6,7 @@ import {Categories} from '../Pages/Categories'
 import {classNames} from "../../Util/classNames";
 import {Breadcrumb, Breadcrumbs} from "../Components/Breadcrumbs";
 import {Items} from "../Pages/Items";
+import {Locations} from "../Pages/Locations";
 
 const navigation = [
     {name: 'Home', href: '/', icon: HomeIcon},
@@ -21,15 +22,31 @@ const breadcrumbs = [
     {name: 'HDMI Cables', href: '#', current: true},
 ]
 
-export function PageContent({children, sidebar}: PropsWithChildren<{ sidebar?: ReactNode }>) {
-    return <main className={"flex flex-grow gap-2 flex-col lg:flex-row px-0 md:px-2"}>
-        {sidebar ? <aside className="lg:w-128">
-            {sidebar}
-        </aside> : null}
-        <section className="overflow-y-auto flex-grow">
-            {children}
-        </section>
-    </main>
+export function buildBreadcrumbs(...crumbs: Breadcrumb[]): Breadcrumb[] {
+    return [{name: 'Home', href: '/'}, ...crumbs]
+}
+
+export function buildBreadcrumbsFromAncestors<T extends { id: number, name: string, ancestors: T[] }>(base: Breadcrumb, value: T): Breadcrumb[] {
+    const crumbs = [base, ...value.ancestors.map(item => ({name: item.name, href: `${base.href}/${item.id}`})).reverse(), {name: value.name, href: `${base.href}/${value.id}`}]
+    return buildBreadcrumbs(...crumbs)
+}
+
+export function PageContent({
+    children,
+    sidebar,
+    breadcrumbs
+}: PropsWithChildren<{ sidebar?: ReactNode, breadcrumbs?: Breadcrumb[] }>) {
+    return <>
+        {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
+        <main className={"flex flex-grow gap-2 flex-col lg:flex-row px-0 md:px-2"}>
+            {sidebar ? <aside className="lg:w-128">
+                {sidebar}
+            </aside> : null}
+            <section className="overflow-y-auto flex-grow">
+                {children}
+            </section>
+        </main>
+    </>
 }
 
 export type NavbarProps = {
@@ -108,17 +125,18 @@ export function Navbar({navigation}: NavbarProps) {
         )}
     </Disclosure>
 }
+
 export type BuildBreadcrumbs = (breadcrumbs: Breadcrumb[]) => void
 
 export default function Layout() {
     return (
         <>
-            <header className={"bg-white shadow"}>
+            <header>
                 <Navbar navigation={navigation}/>
-                <Breadcrumbs items={breadcrumbs}/>
             </header>
             <Routes>
                 <Route path={"categories/*"} element={<Categories/>}/>
+                <Route path={"locations/*"} element={<Locations/>}/>
                 <Route path={"items/*"} element={<Items/>}/>
             </Routes>
         </>

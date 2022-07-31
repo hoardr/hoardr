@@ -24,7 +24,7 @@ export function locationColumns(actions?: (location: Location) => React.ReactNod
         {
             title: "Items",
             key: "items",
-            render: (_, record) => <ItemsDrawer items={record.items} allItems={record.allItems}/>
+            render: (_, record) => "hi" //<ItemsDrawer items={record.items} allItems={record.allItems}/>
         }
     ];
     if (actions) {
@@ -56,7 +56,7 @@ export function RemoveChildLocation({
 export function DeleteLocation({location, onUpdate}: { location: Location, onUpdate: () => void }) {
     const api = useApi()
     return <TableConfirmButton
-        confirmTitle={<>Delete {location.name}?<br/>This will delete all {location.items.length} items in here.<br/>Any
+        confirmTitle={<>Delete {location.name}?<br/>This will delete all {location.stock.length} items in here.<br/>Any
             child locations are unaffected.</>}
         icon={<BiTrash size={20}/>}
         tooltip={"Delete location"}

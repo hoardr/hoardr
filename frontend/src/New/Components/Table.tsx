@@ -37,18 +37,19 @@ export function Table<T, G = any>({keyIndex, columns, data}: TableProps<T, G>) {
         </tr>
         </thead>
         <tbody className="divide-y divide-gray-200 bg-white text-gray-700">
-        {data.map((row) => {
+        {data.map((row, recordIdx) => {
             if (row.tableRecordType === 'group') {
                 rowIdx = 0;
                 return <tr key={row.name} className={"shadow-md"}>
                     <td colSpan={columns.length} className={"whitespace-nowrap px-3 py-2 text-sm font-bold bg-gray-100"}>{row.render()}</td>
                 </tr>
             }
+            const key = typeof keyIndex === 'function' ? keyIndex(row, recordIdx) : row[keyIndex]
             return (
-                <tr key={row[keyIndex] as unknown as Key} className={classNames(rowIdx++ % 2 === 1 ? "bg-gray-50" : "")}>
+                <tr key={key} className={classNames(rowIdx++ % 2 === 1 ? "bg-gray-50" : "")}>
                     {columns.map((column) => (
-                        <td key={column.key}
-                            className={classNames("whitespace-nowrap px-3 py-4 text-sm", column.className)}>{column.render(row, rowIdx)}</td>
+                        <td key={typeof column.title === 'string' ? column.title : column.key}
+                            className={classNames("whitespace-nowrap px-3 py-4 text-sm", column.className)}>{column.render(row, recordIdx)}</td>
                     ))}
                 </tr>
             );

@@ -1,5 +1,5 @@
 import {Op} from "sequelize";
-import {MutationInput, Resolver} from "./index";
+import {MutationInput, Resolver, Resolvers} from "./index";
 import {AllowNull, BelongsTo, Column, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 import StockItem from "./stockItem";
 import Category from "./category";
@@ -103,7 +103,7 @@ export default class Item extends Model {
         return await item.reload()
     })
 
-    static resolver = {
+    static resolver: Resolvers = {
         Query: {
             item: Item.queryOne,
             items: Item.query,

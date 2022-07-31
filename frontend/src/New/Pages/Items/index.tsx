@@ -2,13 +2,13 @@ import React, {useEffect, useState} from 'react';
 import {Route, Routes, useParams} from "react-router-dom";
 import {useApi} from "../../../Api";
 import {Item} from "../../../Api/Types";
-import {PageContent} from "../../Layout";
+import {buildBreadcrumbs, PageContent} from "../../Layout";
 import {Button} from "../../Components/Button";
 import {PlusIcon} from "@heroicons/react/solid";
 import {Card} from "../../Components/Card";
 import {Tab, Tabs} from "../../Components/Tabs";
 import {ShoppingCartIcon, ViewListIcon} from "@heroicons/react/outline";
-import {ItemsTable} from "../Categories/ItemsTable";
+import {ItemsTable} from "./ItemsTable";
 import {AuditLogTable} from "../Categories/AuditLog";
 import {PageHeading} from "../../Components/PageHeading";
 import {StockTable} from "./StockTable";
@@ -31,7 +31,7 @@ function IndexView() {
         api.item.getAll().then(setItems)
     }, [setItems, api.item])
     if (!items) return null;
-    return <PageContent>
+    return <PageContent breadcrumbs={buildBreadcrumbs({name: "Categories", href: "/categories"})}>
         <article className="py-2 px-1 md:px-4 h-full max-h-full">
             <PageHeading title={"Items"}
                          meta={"All items"}
@@ -80,7 +80,7 @@ function DetailView() {
         icon: ViewListIcon,
         href: `/items/${item.id}/log`,
     }]
-    return <PageContent sidebar={<ItemCard item={item}/>}>
+    return <PageContent sidebar={<ItemCard item={item}/>} breadcrumbs={buildBreadcrumbs({name: "Categories", href: "/categories"}, {name: item.name, href: `/items/${item.id}`})}>
         <article className="py-2 h-full max-h-full">
             <Card header={<Tabs tabs={tabs} className={"-mx-4 my-0 md:-my-4"}/>} noDivider>
                 <section className={"-mx-6 -my-6"}>

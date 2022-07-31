@@ -1,12 +1,10 @@
-import {Model, Sequelize} from "sequelize-typescript";
+import {Sequelize} from "sequelize-typescript";
 import Category from "./category";
 import Property from "./property";
 import Item from "./item";
 import Location from "./location";
 import StockItem from "./stockItem";
 import CategoryProperty from "./categoryProperty";
-import {GraphQLResolveInfo} from "graphql/type/definition";
-import {FieldNode} from "graphql";
 import {IFieldResolver} from "@graphql-tools/utils/typings/Interfaces";
 import PropertyValue from "./propertyValue";
 import cls from 'cls-hooked';
@@ -43,3 +41,4 @@ export {
 
 // @ts-ignore
 export const resolvers = models.map(m => m.resolver);
+export type Resolvers = { [p in string]: { [p in string]: Resolver<any> } }

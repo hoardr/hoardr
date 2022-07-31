@@ -1,5 +1,5 @@
 import {Resolver, sequelize} from "./model";
-import {Model} from "sequelize-typescript";
+import {AssociationGetOptions, Model} from "sequelize-typescript";
 import {GraphQLResolveInfo} from "graphql/type/definition";
 import {FieldNode} from "graphql";
 
@@ -31,9 +31,17 @@ export async function descendants<T extends Model & {children: T[]}>(element: T)
 export function getSelectedRelations(info: GraphQLResolveInfo, ...required: string[]): string[] {
     const selections = info.fieldNodes[0].selectionSet?.selections ?? [];
     return [...new Set([...required, ...selections.filter(s => s.kind == 'Field' && s.selectionSet !== undefined).map(s => (s as FieldNode).name.value)])]
+        .map(r => r === 'stock' ? 'stockItems' : r)
 }
 
 export function getSelectedAttributes(info: GraphQLResolveInfo, ...required: string[]): string[] {
     const selections = info.fieldNodes[0].selectionSet?.selections ?? [];
     return [...new Set([...required, ...selections.filter(s => s.kind == 'Field' && s.selectionSet === undefined).map(s => (s as FieldNode).name.value)])]
+}
+
+export function getAssociationOptions(info: GraphQLResolveInfo): AssociationGetOptions {
+    return {
+        attributes: getSelectedAttributes(info),
+        include: getSelectedRelations(info),
+    }
 }

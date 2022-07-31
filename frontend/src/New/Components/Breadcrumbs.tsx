@@ -4,9 +4,8 @@ import {HomeIcon} from "@heroicons/react/outline";
 import {ReactNode} from "react";
 
 export type Breadcrumb = {
-    name: ReactNode,
-    href: string,
-    current: boolean
+    name: ReactNode
+    href: string
 }
 export type BreadcrumbsProps = {
     items: Breadcrumb[]
@@ -14,7 +13,7 @@ export type BreadcrumbsProps = {
 
 export function Breadcrumbs({items}: BreadcrumbsProps) {
     if (items.length < 2) return null;
-    return <div className="px-4 sm:px-6">
+    return <div className="px-4 sm:px-6 bg-white shadow">
         <div className="border-t border-gray-200 py-3">
             <nav className="flex" aria-label="Breadcrumbs">
                 <div className="flex sm:hidden">
@@ -53,7 +52,6 @@ export function Breadcrumbs({items}: BreadcrumbsProps) {
                                 <Link
                                     to={item.href}
                                     className="ml-2 text-sm font-medium text-gray-500 hover:text-gray-700"
-                                    aria-current={item.current ? 'page' : undefined}
                                 >
                                     {item.name}
                                 </Link>

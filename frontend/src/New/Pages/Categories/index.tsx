@@ -5,11 +5,10 @@ import {Category, Property} from "../../../Api/Types";
 import React, {useEffect, useState} from "react";
 import {Tab, Tabs} from "../../Components/Tabs";
 import {Card} from "../../Components/Card";
-import {Button} from "../../Components/Button";
 import {CategoriesTable} from "./CategoriesTable";
 import {useApi} from "../../../Api";
-import {PageContent} from "../../Layout";
-import {ItemsTable} from "./ItemsTable";
+import {buildBreadcrumbs, buildBreadcrumbsFromAncestors, PageContent} from "../../Layout";
+import {ItemsTable} from "../Items/ItemsTable";
 import {AuditLogTable} from "./AuditLog";
 import {PropertiesTable} from "./PropertiesTable";
 import {collectFromAncestors, collectFromDescendants} from "../../util";
@@ -32,7 +31,7 @@ function IndexView() {
         api.category.getRoot().then(setCategories)
     }, [setCategories, api.category])
     if (!categories) return null;
-    return <PageContent>
+    return <PageContent breadcrumbs={buildBreadcrumbs({name: "Categories", href: "/categories"})}>
         <article className="py-2 px-1 md:px-4 h-full max-h-full">
             <PageHeading title={"Categories"}
                          meta={"All top-level categories"}
@@ -90,7 +89,7 @@ function DetailView() {
         icon: ViewListIcon,
         href: `/categories/${category.id}/log`,
     }]
-    return <PageContent sidebar={<CategoryCard category={category}/>}>
+    return <PageContent sidebar={<CategoryCard category={category}/>} breadcrumbs={buildBreadcrumbsFromAncestors({name: "Categories", href: "/categories"}, category)}>
         <article className="py-2 h-full max-h-full">
             <Card header={<Tabs tabs={tabs} className={"-mx-4 my-0 md:-my-4"}/>} noDivider>
                 <section className={"-mx-6 -my-6"}>

@@ -17,8 +17,8 @@ const columns: Columns<Category> = [
         render: (category) => <span className={"text-gray-500"}>{category.description}</span>
     },
     {
-        key: "Name",
-        title: <IconText icon={ViewGridIcon}>Name</IconText>,
+        key: "Items",
+        title: <IconText icon={ViewGridIcon}>Items</IconText>,
         render: (category) => <Link to={`/categories/${category.id}/items`} className={"text-blue-700 hover:text-blue-900"}>{quantity(category.items?.length ?? 0, "item", "items")}</Link>
     },
     {

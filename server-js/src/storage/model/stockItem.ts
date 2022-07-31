@@ -1,4 +1,4 @@
-import {MutationInput, Resolver} from "./index";
+import {MutationInput, Resolver, Resolvers} from "./index";
 import {AllowNull, BelongsTo, Column, ForeignKey, Model, Table} from "sequelize-typescript";
 import Item from "./item";
 import Location from "./location";
@@ -41,7 +41,7 @@ export default class StockItem extends Model {
         })
     }
 
-    static resolver = {
+    static resolver: Resolvers = {
         Query: {
             stockItems: StockItem.find
         },

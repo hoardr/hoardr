@@ -1,5 +1,5 @@
 import {INTEGER, Op} from "sequelize";
-import {MutationInput, Resolver} from "./index";
+import {MutationInput, Resolver, Resolvers} from "./index";
 import {AllowNull, BelongsTo, BelongsToMany, Column, ForeignKey, HasMany, Model, Table} from "sequelize-typescript";
 import Property from "./property";
 import CategoryProperty from "./categoryProperty";
@@ -70,7 +70,7 @@ export default class Category extends Model {
         return await Category.findByPk(id)
     }
 
-    static resolver = {
+    static resolver: Resolvers = {
         Query: {
             category: Category.queryOne,
             categories: Category.query,

@@ -16,7 +16,10 @@ export function collectFromDescendants<T extends { [key in K]: R[] }, K extends 
     return result
 }
 
-export function ancestorPath<T extends { name: string, ancestors: T[] }>(elem: T) {
+export function ancestorPath<T extends { name: string, ancestors?: T[] }>(elem: T) {
+    if (!elem.ancestors) {
+        return elem.name
+    }
     const elems = [...elem.ancestors.map(l => l.name).reverse(), elem.name]
     return elems.join("/")
 }

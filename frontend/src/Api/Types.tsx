@@ -20,12 +20,13 @@ export type Location = {
     description?: string
     children: Location[]
     allItems: Item[]
-    items: Item[]
+    stock: StockItem[]
     allParents: Location[]
     ancestors: Location[]
     descendants: Location[]
     events: LocationEvent[]
     parent: Location
+    auditLog: AuditLogEvent[]
 }
 
 export type LocationEvent = {

@@ -39,28 +39,55 @@ export class LocationApi {
         addLocation(input: $input) { id }
     }`
 
-    private static GET = gql`query($id: Int) {
+    private static selection(s: string) {
+        return gql`
+            fragment innerSelection on Location {
+                id name description stock { id quantity } ancestors { id name description }
+            }
+            fragment selection on Location {
+                ...innerSelection
+                id
+                name
+                description
+                children { id name description stock { id quantity } }
+                stock { id quantity item { id name } }
+                parent { id name }
+                auditLog { id action data createdAt }
+            }
+        ${s}`
+    }
+
+    private static GET = LocationApi.selection(gql`query($id: Int) {
         locations(id: $id) {
-            id
-            name
-            allStockItems { id quantity item { id name category { id name } } }
-            children { id name }
-            stock { id quantity item { id name } }
-            parent { id name }
+            ...selection
         }
-    }`
+    }`)
+    private static GET_ONE = LocationApi.selection(gql`query($id: Int!) {
+        location(id: $id) {
+            ...selection
+        }
+    }`)
+
+    private static GET_ROOT = LocationApi.selection(gql`query {
+        locations(root: true) {
+            ...selection
+        }
+    }`)
 
     constructor(private client: GraphQLClient, private axios: Axios) {
 
     }
 
     public async getAll(): Promise<Location[]> {
-        // return (await this.axios.get<Location[]>("/v1/categories")).data
         return (await this.client.request<{ locations: Location[] }>(LocationApi.GET)).locations
     }
 
-    public async get(id: number): Promise<Location[]> {
-        return (await this.client.request<{ locations: Location[] }>(LocationApi.GET, {id})).locations
+    public async getRoot(): Promise<Location[]> {
+        return (await this.client.request<{ locations: Location[] }>(LocationApi.GET_ROOT)).locations
+    }
+
+    public async get(id: number): Promise<Location> {
+        return (await this.client.request<{ location: Location }>(LocationApi.GET_ONE, {id})).location
     }
 
     public async delete(locationId: number) {
