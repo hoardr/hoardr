@@ -2,18 +2,19 @@ import React, {useEffect, useState} from 'react';
 import {Route, Routes, useParams} from "react-router-dom";
 import {useApi} from "../../../Api";
 import {Item} from "../../../Api/Types";
-import {buildBreadcrumbs, PageContent} from "../../Layout";
+import {buildBreadcrumbs, PageContent,} from "../../Layout";
+import {AuditLogIcon, ItemIcon, StockIcon} from "../../Layout/icons";
 import {Button} from "../../Components/Button";
 import {PlusIcon} from "@heroicons/react/solid";
 import {Card} from "../../Components/Card";
 import {Tab, Tabs} from "../../Components/Tabs";
-import {ShoppingCartIcon, ViewListIcon} from "@heroicons/react/outline";
 import {ItemsTable} from "./ItemsTable";
 import {AuditLogTable} from "../Categories/AuditLog";
 import {PageHeading} from "../../Components/PageHeading";
 import {StockTable} from "./StockTable";
 import {NewItemForm} from "../../Components/NewItemForm";
 import {FormButton} from "../../Components/FormButton";
+import {IconText} from "../../Components/IconText";
 
 
 export function Items() {
@@ -31,7 +32,7 @@ function IndexView() {
         api.item.getAll().then(setItems)
     }, [setItems, api.item])
     if (!items) return null;
-    return <PageContent breadcrumbs={buildBreadcrumbs({name: "Categories", href: "/categories"})}>
+    return <PageContent breadcrumbs={buildBreadcrumbs({name: <IconText icon={ItemIcon}>Items</IconText>, href: "/items"})}>
         <article className="py-2 px-1 md:px-4 h-full max-h-full">
             <PageHeading title={"Items"}
                          meta={"All items"}
@@ -72,12 +73,12 @@ function DetailView() {
     if (!item) return null;
     const tabs: Tab[] = [{
         name: "Stock",
-        icon: ShoppingCartIcon,
+        icon: StockIcon,
         href: `/items/${item.id}`,
         aside: <Button type={"success"} icon={PlusIcon}>New subcategory</Button>
     }, {
         name: "Log",
-        icon: ViewListIcon,
+        icon: AuditLogIcon,
         href: `/items/${item.id}/log`,
     }]
     return <PageContent sidebar={<ItemCard item={item}/>} breadcrumbs={buildBreadcrumbs({name: "Categories", href: "/categories"}, {name: item.name, href: `/items/${item.id}`})}>

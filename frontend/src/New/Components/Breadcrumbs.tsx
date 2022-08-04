@@ -19,7 +19,7 @@ export function Breadcrumbs({items}: BreadcrumbsProps) {
                 <div className="flex sm:hidden">
                     <a
                         href="src/New/Components/index#"
-                        className="group inline-flex space-x-3 text-sm font-medium text-gray-500 hover:text-gray-700"
+                        className="group inline-flex space-x-3 h-5 text-sm font-medium text-gray-500 hover:text-gray-700"
                     >
                         <ArrowNarrowLeftIcon
                             className="flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-600"
@@ -32,7 +32,7 @@ export function Breadcrumbs({items}: BreadcrumbsProps) {
                     <ol role="list" className="flex items-center space-x-4">
                         <li>
                             <div>
-                                <Link to="/" className="text-gray-400 hover:text-gray-500">
+                                <Link to="/" className="text-gray-500 hover:text-gray-700">
                                     <HomeIcon className="flex-shrink-0 h-5 w-5" aria-hidden="true"/>
                                     <span className="sr-only">Home</span>
                                 </Link>
@@ -51,7 +51,7 @@ export function Breadcrumbs({items}: BreadcrumbsProps) {
                                 </svg>
                                 <Link
                                     to={item.href}
-                                    className="ml-2 text-sm font-medium text-gray-500 hover:text-gray-700"
+                                    className="ml-2 h-5 text-sm font-medium text-gray-500 hover:text-gray-700"
                                 >
                                     {item.name}
                                 </Link>

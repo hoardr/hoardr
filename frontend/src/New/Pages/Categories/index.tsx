@@ -1,4 +1,3 @@
-import {FolderIcon, ViewGridIcon, ViewListIcon} from '@heroicons/react/outline';
 import {PlusIcon} from "@heroicons/react/solid";
 import {Route, Routes, useParams} from "react-router-dom";
 import {Category, Property} from "../../../Api/Types";
@@ -7,7 +6,16 @@ import {Tab, Tabs} from "../../Components/Tabs";
 import {Card} from "../../Components/Card";
 import {CategoriesTable} from "./CategoriesTable";
 import {useApi} from "../../../Api";
-import {buildBreadcrumbs, buildBreadcrumbsFromAncestors, PageContent} from "../../Layout";
+import {
+    buildBreadcrumbs,
+    buildBreadcrumbsFromAncestors,
+    PageContent
+} from "../../Layout";
+import {
+    AuditLogIcon,
+    CategoryIcon,
+    ItemIcon,
+} from "../../Layout/icons";
 import {ItemsTable} from "../Items/ItemsTable";
 import {AuditLogTable} from "./AuditLog";
 import {PropertiesTable} from "./PropertiesTable";
@@ -16,6 +24,7 @@ import {PageHeading} from "../../Components/PageHeading";
 import {NewCategoryForm} from "../../Components/NewCategoryForm";
 import {FormButton} from "../../Components/FormButton";
 import {NewItemForm} from "../../Components/NewItemForm";
+import {IconText} from '../../Components/IconText';
 
 export function Categories() {
     return <Routes>
@@ -31,7 +40,10 @@ function IndexView() {
         api.category.getRoot().then(setCategories)
     }, [setCategories, api.category])
     if (!categories) return null;
-    return <PageContent breadcrumbs={buildBreadcrumbs({name: "Categories", href: "/categories"})}>
+    return <PageContent breadcrumbs={buildBreadcrumbs({
+        name: <IconText icon={CategoryIcon}>Categories</IconText>,
+        href: "/categories"
+    })}>
         <article className="py-2 px-1 md:px-4 h-full max-h-full">
             <PageHeading title={"Categories"}
                          meta={"All top-level categories"}
@@ -72,24 +84,27 @@ function DetailView() {
     if (!category) return null;
     const tabs: Tab[] = [{
         name: "Subcategories",
-        icon: FolderIcon,
+        icon: CategoryIcon,
         href: `/categories/${category.id}`,
         aside: <FormButton title={"New subcategory"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new category"}>
             {({formRef}) => <NewCategoryForm defaultParentId={category.id} formRef={formRef}/>}
         </FormButton>
     }, {
         name: "Items",
-        icon: ViewGridIcon,
+        icon: ItemIcon,
         href: `/categories/${category.id}/items`,
         aside: <FormButton title={"New item"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new item"}>
             {({formRef}) => <NewItemForm formRef={formRef} defaultCategoryId={category.id}/>}
         </FormButton>
     }, {
         name: "Log",
-        icon: ViewListIcon,
+        icon: AuditLogIcon,
         href: `/categories/${category.id}/log`,
     }]
-    return <PageContent sidebar={<CategoryCard category={category}/>} breadcrumbs={buildBreadcrumbsFromAncestors({name: "Categories", href: "/categories"}, category)}>
+    return <PageContent sidebar={<CategoryCard category={category}/>} breadcrumbs={buildBreadcrumbsFromAncestors({
+        name: "Categories",
+        href: "/categories"
+    }, category)}>
         <article className="py-2 h-full max-h-full">
             <Card header={<Tabs tabs={tabs} className={"-mx-4 my-0 md:-my-4"}/>} noDivider>
                 <section className={"-mx-6 -my-6"}>

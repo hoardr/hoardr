@@ -2,18 +2,27 @@ import {Route, Routes, useParams} from "react-router-dom";
 import {useApi} from "../../../Api";
 import React, {useEffect, useState} from "react";
 import {Location} from "../../../Api/Types";
-import {buildBreadcrumbs, buildBreadcrumbsFromAncestors, PageContent} from "../../Layout";
+import {
+    buildBreadcrumbs,
+    buildBreadcrumbsFromAncestors,
+    PageContent,
+} from "../../Layout";
+import {
+    AuditLogIcon,
+    LocationIcon,
+    StockIcon
+} from "../../Layout/icons";
 import {PageHeading} from "../../Components/PageHeading";
 import {FormButton} from "../../Components/FormButton";
 import {PlusIcon} from "@heroicons/react/solid";
 import {Card} from "../../Components/Card";
 import {Tab, Tabs} from "../../Components/Tabs";
-import {LocationMarkerIcon, ShoppingCartIcon, ViewListIcon} from "@heroicons/react/outline";
 import {AuditLogTable} from "../Categories/AuditLog";
 import {LocationsTable} from "./LocationsTable";
 import {NewLocationForm} from "../../Components/NewLocationForm";
 import {StockTable} from "../Items/StockTable";
 import {collectFromDescendants} from "../../util";
+import {IconText} from "../../Components/IconText";
 
 export function Locations() {
     return <Routes>
@@ -30,7 +39,8 @@ function IndexView() {
         api.location.getRoot().then(setLocations)
     }, [setLocations, api.location])
     if (!locations) return null;
-    return <PageContent breadcrumbs={buildBreadcrumbs({name: "Locations", href: "/locations"})}>
+    return <PageContent
+        breadcrumbs={buildBreadcrumbs({name: <IconText icon={LocationIcon}>Locations</IconText>, href: "/locations"})}>
         <article className="py-2 px-1 md:px-4 h-full max-h-full">
             <PageHeading title={"Locations"}
                          meta={"All top-level locations"}
@@ -71,18 +81,18 @@ function DetailView() {
     if (!location) return null;
     const tabs: Tab[] = [{
         name: "Sublocations",
-        icon: LocationMarkerIcon,
+        icon: LocationIcon,
         href: `/locations/${location.id}`,
         aside: <FormButton title={"New location"} submit={"Add"} icon={PlusIcon} subTitle={"Add a new location"}>
             {({formRef}) => <NewLocationForm formRef={formRef}/>}
         </FormButton>,
     }, {
         name: "Stock",
-        icon: ShoppingCartIcon,
+        icon: StockIcon,
         href: `/locations/${location.id}/stock`,
     }, {
         name: "Log",
-        icon: ViewListIcon,
+        icon: AuditLogIcon,
         href: `/locations/${location.id}/log`,
     }]
     return <PageContent sidebar={<LocationCard location={location}/>}
@@ -92,7 +102,9 @@ function DetailView() {
                 <section className={"-mx-6 -my-6"}>
                     <Routes>
                         <Route path={"log"} element={<AuditLogTable events={location.auditLog}/>}/>
-                        <Route path={"stock"} element={<StockTable stockItems={collectFromDescendants(location, 'stock', 'location')} columns={['item', 'location']}/>}/>
+                        <Route path={"stock"}
+                               element={<StockTable stockItems={collectFromDescendants(location, 'stock', 'location')}
+                                                    columns={['item', 'location']}/>}/>
                         <Route index element={<LocationsTable locations={location.children}/>}/>
                     </Routes>
                 </section>

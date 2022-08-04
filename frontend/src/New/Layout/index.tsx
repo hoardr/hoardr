@@ -1,25 +1,19 @@
 import {FC, PropsWithChildren, ReactNode, SVGProps} from 'react'
 import {Disclosure} from '@headlessui/react'
-import {FolderIcon, HomeIcon, LocationMarkerIcon, MenuIcon, ViewGridIcon, XIcon} from '@heroicons/react/outline'
+import {HomeIcon, MenuIcon, XIcon} from '@heroicons/react/outline'
 import {NavLink, Route, Routes} from 'react-router-dom'
 import {Categories} from '../Pages/Categories'
 import {classNames} from "../../Util/classNames";
 import {Breadcrumb, Breadcrumbs} from "../Components/Breadcrumbs";
 import {Items} from "../Pages/Items";
 import {Locations} from "../Pages/Locations";
+import {CategoryIcon, ItemIcon, LocationIcon,} from "./icons";
 
 const navigation = [
     {name: 'Home', href: '/', icon: HomeIcon},
-    {name: 'Categories', href: '/categories', icon: FolderIcon},
-    {name: 'Locations', href: '/locations', icon: LocationMarkerIcon},
-    {name: 'Items', href: '/items', icon: ViewGridIcon},
-]
-
-const breadcrumbs = [
-    {name: 'Home', href: '/', current: false},
-    {name: 'Categories', href: '/categories', current: false},
-    {name: 'Electronics', href: '#', current: false},
-    {name: 'HDMI Cables', href: '#', current: true},
+    {name: 'Categories', href: '/categories', icon: CategoryIcon},
+    {name: 'Locations', href: '/locations', icon: LocationIcon},
+    {name: 'Items', href: '/items', icon: ItemIcon},
 ]
 
 export function buildBreadcrumbs(...crumbs: Breadcrumb[]): Breadcrumb[] {
@@ -27,7 +21,10 @@ export function buildBreadcrumbs(...crumbs: Breadcrumb[]): Breadcrumb[] {
 }
 
 export function buildBreadcrumbsFromAncestors<T extends { id: number, name: string, ancestors: T[] }>(base: Breadcrumb, value: T): Breadcrumb[] {
-    const crumbs = [base, ...value.ancestors.map(item => ({name: item.name, href: `${base.href}/${item.id}`})).reverse(), {name: value.name, href: `${base.href}/${value.id}`}]
+    const crumbs = [base, ...value.ancestors.map(item => ({
+        name: item.name,
+        href: `${base.href}/${item.id}`
+    })).reverse(), {name: value.name, href: `${base.href}/${value.id}`}]
     return buildBreadcrumbs(...crumbs)
 }
 
@@ -37,7 +34,7 @@ export function PageContent({
     breadcrumbs
 }: PropsWithChildren<{ sidebar?: ReactNode, breadcrumbs?: Breadcrumb[] }>) {
     return <>
-        {breadcrumbs ? <Breadcrumbs items={breadcrumbs} /> : null}
+        {breadcrumbs ? <Breadcrumbs items={breadcrumbs}/> : null}
         <main className={"flex flex-grow gap-2 flex-col lg:flex-row px-0 md:px-2"}>
             {sidebar ? <aside className="lg:w-128">
                 {sidebar}
@@ -125,8 +122,6 @@ export function Navbar({navigation}: NavbarProps) {
         )}
     </Disclosure>
 }
-
-export type BuildBreadcrumbs = (breadcrumbs: Breadcrumb[]) => void
 
 export default function Layout() {
     return (

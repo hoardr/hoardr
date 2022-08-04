@@ -2,13 +2,13 @@ import {Columns, Table} from "../../Components/Table";
 import {Category} from "../../../Api/Types";
 import {Link} from "react-router-dom";
 import {IconText} from "../../Components/IconText";
-import {FolderIcon, ViewGridIcon} from "@heroicons/react/outline";
 import {quantity} from "../../util";
+import {CategoryIcon, ItemIcon} from "../../Layout/icons";
 
 const columns: Columns<Category> = [
     {
         key: "Name",
-        title: <IconText icon={FolderIcon}>Name</IconText>,
+        title: <IconText icon={CategoryIcon}>Name</IconText>,
         render: (category) => <Link to={`/categories/${category.id}`}
                                     className={"text-blue-700 hover:text-blue-900"}>{category.name}</Link>
     },
@@ -18,17 +18,19 @@ const columns: Columns<Category> = [
     },
     {
         key: "Items",
-        title: <IconText icon={ViewGridIcon}>Items</IconText>,
-        render: (category) => <Link to={`/categories/${category.id}/items`} className={"text-blue-700 hover:text-blue-900"}>{quantity(category.items?.length ?? 0, "item", "items")}</Link>
+        title: <IconText icon={ItemIcon}>Items</IconText>,
+        render: (category) => <Link to={`/categories/${category.id}/items`}
+                                    className={"text-blue-700 hover:text-blue-900"}>{quantity(category.items?.length ?? 0, "item", "items")}</Link>
     },
     {
         key: "Edit",
         title: <span className="sr-only">Edit</span>,
         className: "text-right",
-        render: (category) => <a href="src/New/Pages/Categories/Categories#" className="text-blue-700 hover:text-blue-900">Edit</a>
+        render: (category) => <a href="src/New/Pages/Categories/Categories#"
+                                 className="text-blue-700 hover:text-blue-900">Edit</a>
     },
 ]
 
-export function CategoriesTable({categories}: {categories: Category[]}) {
+export function CategoriesTable({categories}: { categories: Category[] }) {
     return <Table keyIndex={"id"} columns={columns} data={categories}/>
 }
